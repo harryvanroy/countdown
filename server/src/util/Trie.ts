@@ -16,8 +16,6 @@ const data = fs.readFileSync("./src/util/dict.txt", "utf8").split("\n");
 const trie = create(data);
 
 const populateSet = (props: Props) => {
-  // const trie = new TrieSearch('name', { min: 1 });
-
   const permuteWords = (
     wordBank: string,
     currWord: string,
