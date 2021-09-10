@@ -5,7 +5,12 @@
     "rootDir": "./",
     "outDir": "./build",
     "esModuleInterop": true,
+    "noImplicitAny": true,
     "strict": true,
-    "noImplicitAny": false
-  }
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": ["src/**/*"]
 }
