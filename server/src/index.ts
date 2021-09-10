@@ -11,7 +11,6 @@ const log: Logger = new Logger();
 const app = express();
 const port = process.env.PORT || 5000;
 const server = createServer(app);
-const io = new Server(server);
 
 app.use(cors());
 
