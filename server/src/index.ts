@@ -15,46 +15,6 @@ const io = new Server(server);
 
 app.use(cors());
 
-io.on("connection", (socket: Socket) => {
-  socket.on(
-    "joinRoom",
-    ({ username, room }: { username: string; room: string }) => {
-      const user = userJoin(socket.id, username, room);
-
-      socket.join(user.room);
-      socket.emit("message", "welcome");
-      socket.broadcast
-        .to(user.room)
-        .emit("message", `${user.username} has joined the chat`);
-
-      io.to(user.room).emit("roomUsers", {
-        room: user.room,
-        users: getRoomUsers(user.room),
-      });
-    }
-  );
-
-  socket.on("chatMessage", (msg: string) => {
-    const user = getCurrentUser(socket.id);
-
-    io.to(user.room).emit("message", user.username, msg);
-  });
-
-  // Runs when client disconnects
-  socket.on("disconnect", () => {
-    const user = userLeave(socket.id);
-
-    if (user) {
-      io.to(user.room).emit("message", `${user.username} has left the chat`);
-
-      io.to(user.room).emit("roomUsers", {
-        room: user.room,
-        users: getRoomUsers(user.room),
-      });
-    }
-  });
-});
-
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is up and running!");
 });
