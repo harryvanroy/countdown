@@ -6,7 +6,6 @@ interface User {
 
 const users: User[] = [];
 
-// Join user to chat
 export const userJoin = (id: number, username: string, room: string) => {
   const user = { id, username, room };
 

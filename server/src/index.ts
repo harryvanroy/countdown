@@ -22,16 +22,11 @@ io.on("connection", (socket: Socket) => {
       const user = userJoin(socket.id, username, room);
 
       socket.join(user.room);
-
-      // Welcome current user
       socket.emit("message", "welcome");
-
-      // Broadcast when a user connects
       socket.broadcast
         .to(user.room)
         .emit("message", `${user.username} has joined the chat`);
 
-      // Send users and room info
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
@@ -39,7 +34,6 @@ io.on("connection", (socket: Socket) => {
     }
   );
 
-  // Listen for chatMessage
   socket.on("chatMessage", (msg: string) => {
     const user = getCurrentUser(socket.id);
 
@@ -53,7 +47,6 @@ io.on("connection", (socket: Socket) => {
     if (user) {
       io.to(user.room).emit("message", `${user.username} has left the chat`);
 
-      // Send users and room info
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
