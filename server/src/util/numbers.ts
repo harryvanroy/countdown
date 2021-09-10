@@ -1,5 +1,6 @@
+import e from "express";
 
-const numbers = [1, 2, 3, 4, 5, 6];
+const numbers = [75, 100, 25, 50, 9, 2];
 const operators = ["+", "-", "*", "//"];
 
 function removeItemOnce(arr, items) {
@@ -17,7 +18,7 @@ var OPS = {
     "+": function (n1, n2) { return n1 + n2; },
     "-": function (n1, n2) { return n1 - n2; },
     "*": function (n1, n2) { return n1 * n2; },
-    "/": function (n1, n2) { return n1 / n2 >> 0; },
+    "/": function (n1, n2) { return n1 / n2; },
 };
 
 const permute_numbers = (numbers, valSums, equation, equations) => {
@@ -27,27 +28,26 @@ const permute_numbers = (numbers, valSums, equation, equations) => {
         for (var o in OPS) {
             var s = OPS[o](valSums, numbers[0]);
             var term = "(" + equation + ")" + o + numbers[0];
-            if (s > 0 && s < 1000) {
+            if (s > 0 && s < 1000 && s >> 0 == s) {
                 equations[s].push(term);
             }
         }
         return
     }
+
     for (var m in OPS) {
-        for (var i = 0; i < numbers.length - 1; i++) {
+        for (var i = 0; i < numbers.length; i++) {
             var ni = numbers[i];
-            for (var j = i + 1; j < numbers.length; j++) {
-                var nj = numbers[j];
-                for (var o in OPS) {
-                    var r = OPS[o](ni, nj);
-                    var s = OPS[m](valSums, r)
-                    var term = (equation == "") ? "(" + ni + o + nj + ")" : "(" + equation + ")" + m + "(" + ni + o + nj + ")";
-                    if (s > 0 && s < 1000) {
-                        equations[s].push(term);
-                    }
-                    permute_numbers(removeItemOnce(numbers, [ni, nj]), s, term, equations);
-                }
+            var r = OPS[m](valSums, ni);
+            var equi = "(" + equation + ")" + m + ni;
+            if (equation == "") {
+                r = ni;
+                equi = "" + ni;
             }
+            if (r > 0 && r < 1000 && r >> 0 == r) {
+                equations[r].push(equi);
+            }
+            permute_numbers(removeItemOnce(numbers, [ni]), r, `${equi}`, equations);
         }
     }
 
@@ -59,10 +59,8 @@ for (var i = 0; i < 1000; i++) {
 }
 
 permute_numbers(numbers, 0, "", yeet);
-for (var c of yeet["10"]) {
-    if (eval(c) >> 0 != eval(c) || c.includes("/")) {
-        continue;
-    }
+// console.log(yeet)
+for (var c of yeet["334"]) {
     console.log(c);
     console.log(eval(c));
 }
