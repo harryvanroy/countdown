@@ -1,12 +1,16 @@
-import express from "express";
+import express, { Request, Response } from "express";
+import { Logger } from "tslog";
+import "dotenv/config";
+
+const log: Logger = new Logger();
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT;
 
-app.get("/", (req, res) => {
-  res.send("Test!");
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello!");
 });
 
 app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
+  log.info(`server started at http://localhost:${port}`);
 });
