@@ -1,33 +1,42 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import { useGame } from "../context/game";
-import { makeNewRoom } from "../api";
-import io from "socket.io-client";
-=======
-import React from 'react';
-import { useGame } from '../context/game';
+import io, { Socket } from "socket.io-client";
 import { createRoom } from '../api'
->>>>>>> ed620c865752797ca5fa2cc16cc20c7799ba6b0a
 
 const Home = () => {
   const game = useGame();
   const [username, setUsername] = useState("");
 
+  const initSocket = () => {
+    if (game && !game.state.socket) {
+      const socket = io(`http://${window.location.hostname}:3000`);
+      game.updateState({socket});
+    }
+  }
+
   const onCreateRoom = (_: any) => {
-<<<<<<< HEAD
     if (username === "") {
       alert("Username is not set");
       return;
-=======
-    try {
-      const roomId = createRoom();
-      game?.updateState({roomId});
-    } catch (e: any) {
-      // TODO
-      alert(e?.message)
->>>>>>> ed620c865752797ca5fa2cc16cc20c7799ba6b0a
     }
-    const socket = io(`http://${window.location.hostname}:3000`);
+
+    initSocket();
+    const socket = game?.state.socket;
+
+    socket?.emit("createRoom", (response: any) => {
+      const { error, user } = response || {};
+
+      if (error) {
+        alert(error);
+      } else if (!error || !user) {
+        alert("Didn't return user.")
+      } else {
+        const { username, roomID, isHost } = user;
+        game?.updateState({
+          roomId: roomID,
+        })
+      }
+    });    
   };
 
   return (
