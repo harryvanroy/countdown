@@ -5,6 +5,7 @@ import io, { Socket } from "socket.io-client";
 const Home = () => {
   const game = useGame();
   const [username, setUsername] = useState("");
+  const [roomId, setRoomId] = useState("");
 
   const initSocket = () => {
     if (game && !game.state.socket) {
@@ -26,7 +27,6 @@ const Home = () => {
 
     const socket = initSocket();
 
-    console.log({socket})
     socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
       console.log(response)
@@ -42,6 +42,23 @@ const Home = () => {
     });
   };
 
+  const onJoinRoom = (e: any) => {
+    const socket = initSocket();
+
+    socket?.emit("joinRoom",  { username, room: roomId }, (response: any) => {
+      const { error, user } = response || {};
+
+      if (error) {
+        alert(error);
+      } else {
+        const { username, roomID, isHost } = user;
+        game?.updateState({
+          roomId: roomID,
+        });
+      }
+    })
+  }
+
   return (
     <>
       <label htmlFor="username">Username:</label>
@@ -51,9 +68,15 @@ const Home = () => {
         name="username"
         onChange={(e) => setUsername(e.target.value)}
       />
-      <h1>{game?.state.roomId}</h1>
       <button onClick={onCreateRoom}>Create room</button>
-      <button>Join room</button>
+      <label htmlFor="roomId">Room Id:</label>
+      <input
+        type="text"
+        id="roomId"
+        name="roomId"
+        onChange={(e) => setRoomId(e.target.value)}
+      />
+      <button onClick={onJoinRoom}>Join room</button>
     </>
   );
 };
