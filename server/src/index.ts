@@ -29,9 +29,11 @@ const log: Logger = new Logger();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const server: http.Server = http.createServer(app);
 const io: socketio.Server = new socketio.Server();
+
 io.attach(server);
 
 app.use(cors());
@@ -72,6 +74,7 @@ io.on(
             solutions: null,
             selection: null,
             targetNum: null,
+            leaderboard: {}
           };
           addRoom(user.roomID, room);
 
@@ -88,27 +91,33 @@ io.on(
       });
     });
 
-    socket.on("numbersGuess", (guess, callback) => {
-      const guessReg = guess.replace(/[^-()\d/*+.]/g, "");
-      const total = parseInt(eval(guessReg));
-
+    socket.on("guess", (guess, _) => {
       const user = getUser(socket.id);
       const room = getRoom(user.roomID);
+      room.leaderboard[user.username] = {
+        "guess": guess,
+        "score": 0
+      }
 
-      if (isNaN(total)) {
-        callback({
-          error: "Not a valid expression",
-        });
-      } else {
-        if (room.targetNum) {
-          io.to(user.roomID).emit("chatMessage", {
-            username: "server",
-            message: `${user.username}'s guess is off by ${
-              room.targetNum - total
-            }`,
-          });
+      if (room.gameMode == "letters") {
+        if (guess.length <= 9 && /^[a-zA-Z]+$/.test(guess)
+          && room.solutions?.includes(guess)) {
+          room.leaderboard[user.username]["score"] = guess.length
+        }
+      } else if (room.gameMode == "numbers") {
+        const answerSafe = guess.replace(/[^-()\d/*+.]/g, "");
+        const numb = guess.match(/(\d[\d\.]*)/g)?.map(a => parseInt(a));
+        const selection = room.selection as number[];
+
+        if (answerSafe && room.targetNum && numb !== undefined
+          && numb.every(val => selection.includes(val))) {
+          room.leaderboard[user.username]["score"] = 10 - Math.abs(eval(answerSafe) - room.targetNum)
         }
       }
+      io.to(user.roomID).emit("chatMessage", {
+        username: "server",
+        message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
+      });
     });
 
     socket.on("joinRoom", ({ username, room }, callback) => {
@@ -133,7 +142,7 @@ io.on(
       });
     });
 
-    socket.on("startGame", (body, callback) => {
+    socket.on("startGame", async (body, callback) => {
       const mode = body.mode;
       const time = body.time;
       const user = getUser(socket.id);
@@ -152,7 +161,7 @@ io.on(
         }
 
         const target = Math.floor(Math.random() * 1000);
-        const solutions = generateNumbersSolutions(selection, target);
+        const solutions = generateNumbersSolutions(selection, target).slice(0, 1);
         const room = getRoom(user.roomID);
         addRoom(user.roomID, {
           ...room,
@@ -193,7 +202,21 @@ io.on(
         });
         log.info(`${user.username} started a game.`);
       }
+
+      await delay(parseInt(time) * 1000);
+
+      const leaderboard = getRoom(user.roomID).leaderboard
+      io.to(user.roomID).emit("startPodium", {
+        leaderboard
+      });
     });
+
+    // socket.on("tickGuess", () => {
+
+
+
+
+    // });
 
     socket.on("disconnect", () => {
       const user = removeUser(socket.id);

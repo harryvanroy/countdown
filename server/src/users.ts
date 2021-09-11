@@ -10,6 +10,7 @@ interface Room {
   solutions: string[] | null;
   selection: number[] | string | null;
   targetNum: number | null;
+  leaderboard: Record<string, Record<string, number | string>>
 }
 
 export const rooms: Record<string, Room> = {};

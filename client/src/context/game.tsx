@@ -13,7 +13,8 @@ type State = {
   solutions: string[] | null;
   selection: number[] | string[] | null;
   targetNum: number | null;
-  time: string
+  time: string;
+  leaderboard: Record<string, Record<string, number | string>>;
 };
 
 const defaultState: State = {
@@ -27,7 +28,8 @@ const defaultState: State = {
   solutions: null,
   selection: null,
   targetNum: null,
-  time: "30"
+  time: "30",
+  leaderboard: {}
 };
 
 type GameContextValue = {

@@ -39,10 +39,13 @@ export const generateNumbersSolutions = (numbers: Array<number>, target: number)
           r = ni;
           equi = "" + ni;
         }
-        if (r > 0 && r < 1000 && r >> 0 == r) {
-          equations[r].push(equi + " = " + r);
+
+        if (Number.isInteger(r)) {
+          if (r > 0 && r < 1000) {
+            equations[r].push(equi + " = " + r);
+          }
+          permute_numbers(removeItemOnce(numbers, [ni]), r, `${equi}`, equations);
         }
-        permute_numbers(removeItemOnce(numbers, [ni]), r, `${equi}`, equations);
       }
     }
   };

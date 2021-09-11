@@ -26,6 +26,13 @@ export type ServerSideEvents = {
     },
     callback: any
   ) => void;
+  startPodium: (
+    data: {
+      leaderboard: Record<string, Record<string, number>>
+    },
+    callback: any
+  ) => void;
+  guess: (data: string, callback: any) => void;
 };
 
 // what clients send to server
@@ -52,7 +59,7 @@ export type ClientEmitEvents = {
     callback: any
   ) => void;
   chatMessage: (data: string, callback: any) => void;
-  numbersGuess: (data: string, callback: any) => void;
+  guess: (data: string, callback: any) => void;
 };
 
 // what client receives from server

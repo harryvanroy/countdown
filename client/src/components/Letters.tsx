@@ -22,23 +22,41 @@ export const Letters = () => {
     const handleCheckAnswer = () => {
         let answerSafe = false;
         if (game?.state.solutions != null || game?.state.solutions != undefined) {
-            answerSafe = game?.state.solutions.includes(answer.toLowerCase()) && /[^a-zA-Z]/.test(answer);
+            answerSafe = game?.state.solutions.includes(answer.toLowerCase()) && /^[a-zA-Z]+$/.test(answer);
         }
         setScore((answerSafe) ? answer.length : 0);
+
+        const socket = game?.state.socket;
+
+        socket?.emit("guess", answer, (response: any) => {
+            const { error } = response || {};
+
+            if (error) {
+                alert(error);
+            }
+        });
     };
 
     const handleAnswerChange = (event: any) => {
         setAnswer(event.target.value);
-        console.log(event.target.value);
     };
+
+    useEffect(() => {
+        const socket = game?.state.socket;
+
+        socket?.on("startPodium", (data) => {
+            game?.updateState({
+                gameMode: "podium",
+                leaderboard: data.leaderboard
+            });
+        });
+    }, [game]);
 
     useEffect(() => {
         if (seconds > 0) {
             setTimeout(() => setSeconds(seconds - 1), 1000);
-        } else {
-            alert("time done");
         }
-    });
+    }, [seconds]);
 
     return (
         <Box className={classes.root}>
@@ -58,7 +76,6 @@ export const Letters = () => {
                 <p>Selection: {game?.state.selection} </p>
                 <p>Points Scored: {currentScore} </p>
                 <p>Seconds left: {seconds} </p>
-                {seconds === 0 && <p>Solutions: {game?.state.solutions?.join(" ")}</p>}
                 <Box></Box>
             </Paper>
         </Box>

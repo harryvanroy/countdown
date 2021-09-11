@@ -24,7 +24,7 @@ export const Numbers = () => {
   const handleCheckAnswer = () => {
     const socket = game?.state.socket;
 
-    socket?.emit("numbersGuess", answer, (response: any) => {
+    socket?.emit("guess", answer, (response: any) => {
       const { error } = response || {};
 
       if (error) {
@@ -35,14 +35,22 @@ export const Numbers = () => {
 
   const handleAnswerChange = (event: any) => {
     setAnswer(event.target.value);
-    console.log(event.target.value);
   };
+
+  useEffect(() => {
+    const socket = game?.state.socket;
+
+    socket?.on("startPodium", (data) => {
+      game?.updateState({
+        gameMode: "podium",
+        leaderboard: data.leaderboard
+      });
+    });
+  }, [game]);
 
   useEffect(() => {
     if (seconds > 0) {
       setTimeout(() => setSeconds(seconds - 1), 1000);
-    } else {
-      alert("time done");
     }
   });
 
@@ -62,7 +70,6 @@ export const Numbers = () => {
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
         <p>Seconds left: {seconds} </p>
-        {seconds === 0 && <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>}
         <Box></Box>
       </Paper>
     </Box>

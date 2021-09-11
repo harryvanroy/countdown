@@ -11,6 +11,7 @@ const GameArea = () => {
   const game = useGame();
   const mode = game?.state.gameMode;
 
+  console.log(mode);
   switch (mode) {
     case "letters":
       return <Letters />;
