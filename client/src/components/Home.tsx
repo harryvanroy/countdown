@@ -74,6 +74,7 @@ const Home = () => {
         setError(error);
       } else {
         game?.updateState({
+          username,
           roomId: user.roomID,
         });
       }

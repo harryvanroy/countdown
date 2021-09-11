@@ -28,16 +28,21 @@ export type LobbyProps = {
 
 const Lobby = () => {
   const game = useGame();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
 
   const classes = useStyles();
-  /*   const [letterRounds, setLetterRounds] = useState(2);
-  const [numberRounds, setNumberRounds] = useState(2); */
 
   useEffect(() => {
+    if (game?.state.username) {
+      setUsers([game?.state.username]);
+    }
+
+    console.log(game?.state.username);
+
     const socket = game?.state.socket;
     socket?.on("roomUsers", ({ users }) => {
-      setUsers(users);
+      const usernames = users.map((user) => user.username);
+      setUsers(usernames);
     });
 
     socket?.on("startGame", (data) => {
@@ -62,7 +67,7 @@ const Lobby = () => {
         });
       }
     });
-  }, [game, game?.state.socket, users]);
+  }, [game]);
 
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
@@ -94,7 +99,7 @@ const Lobby = () => {
         <Typography variant="h6">Current players:</Typography>
         <ul>
           {users.map((user, index) => (
-            <li key={index}>{user.username}</li>
+            <li key={index}>{user}</li>
           ))}
         </ul>
         <Button variant="contained" onClick={onStartGame} fullWidth>
