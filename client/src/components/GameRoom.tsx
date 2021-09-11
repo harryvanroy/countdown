@@ -21,7 +21,7 @@ const GameRoom = () => {
       return <Podium />;
   }
 
-  return <h1>Error</h1>;
+  return <h1>Error: game started with no gamemode</h1>;
 };
 
 export default GameRoom;

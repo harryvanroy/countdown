@@ -22,6 +22,10 @@ io.attach(server);
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+const roomRounds: { [roomId: string]: string[] } = {
+
+}
+
 io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }, callback) => {
     const room = generateRoomID();
@@ -65,7 +69,7 @@ io.on("connection", (socket: socketio.Socket) => {
     });
   });
 
-  socket.on("startGame", (data, callback) => {
+  socket.on("startGame", ({ rounds }, callback) => {
     const user = getUser(socket.id);
     if (!user || !user.isHost) {
       callback({
@@ -74,7 +78,15 @@ io.on("connection", (socket: socketio.Socket) => {
       return
     }
 
-    io.to(user.roomID).emit("startGame");
+    const { letters, numbers } = rounds;
+    roomRounds[user.roomID] = [];
+    for (let i = 0; i < letters; i++) roomRounds[user.roomID].push('letters');
+    for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push('numbers');
+
+    const currGameMode = roomRounds[user.roomID].pop();
+
+    // TODO
+    io.to(user.roomID).emit("startGame", { gameMode: currGameMode });
     log.info(`${user.username} started a game.`);
   })
 
