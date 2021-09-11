@@ -57,6 +57,7 @@ export const Numbers = () => {
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
         <p>Current value: {currentTotal}</p>
+        <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>
         <p>Seconds left: {seconds} </p>
         <Box></Box>
       </Paper>

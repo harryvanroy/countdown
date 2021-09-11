@@ -15,16 +15,19 @@ const useStyles = makeStyles({
 
 export const Letters = () => {
     const [answer, setAnswer] = useState("");
-    const [currentTotal, setTotal] = useState(0);
+    const [currentScore, setScore] = useState(0);
     const [seconds, setSeconds] = useState(60);
 
     const classes = useStyles();
     const game = useGame();
 
     const handleCheckAnswer = () => {
-        const answerSafe = answer.replace(/[^-()\d/*+.]/g, "");
+        let answerSafe = true;
+        if (game?.state.solutions != null || game?.state.solutions != undefined) {
+            answerSafe = game?.state.solutions.includes(answer);
+        }
         console.log(answerSafe);
-        setTotal(eval(answerSafe));
+        setScore(answer.length);
     };
 
     const handleAnswerChange = (event: any) => {
@@ -57,6 +60,7 @@ export const Letters = () => {
                 <p>Mode: {game?.state.gameMode}</p>
                 <p>Solutions: {game?.state.solutions?.join(" ")}</p>
                 <p>Selection: {game?.state.selection} </p>
+                <p>Points Scored:{currentScore} </p>
                 <p>Seconds left: {seconds} </p>
                 <Box></Box>
             </Paper>
