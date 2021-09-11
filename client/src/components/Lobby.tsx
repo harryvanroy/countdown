@@ -44,7 +44,7 @@ const Lobby = () => {
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
     const body = {
-      mode: "numbers",
+      mode: "letters", // TODO
     };
 
     socket?.emit("startGame", body, (response: any) => {

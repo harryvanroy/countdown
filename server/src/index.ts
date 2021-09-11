@@ -28,8 +28,6 @@ io.attach(server);
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const roomRounds: { [roomId: string]: string[] } = {};
-
 io.on(
   "connection",
   (
@@ -90,13 +88,6 @@ io.on(
         return;
       }
 
-      /*  const { letters, numbers } = rounds;
-    roomRounds[user.roomID] = [];
-    for (let i = 0; i < letters; i++) roomRounds[user.roomID].push("letters");
-    for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push("numbers");
-
-    const currGameMode = roomRounds[user.roomID].pop(); */
-
       if (mode === "numbers") {
         const selection = [1, 2, 5, 9, 50, 100];
         const target = 500;
@@ -115,7 +106,7 @@ io.on(
 
         io.to(user.roomID).emit("startGame", {
           mode,
-          selection,
+          selection: [...selection],
           solutions,
         });
         log.info(`${user.username} started a game.`);
