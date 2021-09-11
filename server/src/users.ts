@@ -1,24 +1,33 @@
 interface User {
-  id: number;
+  id: string;
   username: string;
   room: string;
 }
 
-const users: User[] = [];
+export const users: User[] = [];
 
-export const userJoin = (id: number, username: string, room: string) => {
+export const addUser = (
+  id: string,
+  username: string,
+  room: string
+): User | undefined => {
+  username = username.trim().toLowerCase();
+  room = room.trim().toLowerCase();
+
+  const existingUser = users.find(
+    (user) => user.room === room && user.username === username
+  );
+  if (existingUser) {
+    return;
+  }
+
   const user = { id, username, room };
-
   users.push(user);
 
   return user;
 };
 
-export const getCurrentUser = (id: number) => {
-  return users.find((user) => user.id === id);
-};
-
-export const userLeave = (id: number) => {
+export const removeUser = (id: string): User | undefined => {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
@@ -26,6 +35,8 @@ export const userLeave = (id: number) => {
   }
 };
 
-export const getRoomUsers = (room: string) => {
-  return users.filter((user) => user.room === room);
-};
+export const getUser = (id: string): User | undefined =>
+  users.find((user) => user.id === id);
+
+export const getUsersInRoom = (room: string): User[] =>
+  users.filter((user) => user.room === room);

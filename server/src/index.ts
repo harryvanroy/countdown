@@ -1,51 +1,101 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { Server } from "socket.io";
-import { createServer } from "http";
 import { Logger } from "tslog";
-import { userJoin, getRoomUsers, getCurrentUser, userLeave } from "./users";
+import { addUser, getUser, removeUser, getUsersInRoom, users } from "./users";
+import * as http from "http";
+import * as socketio from "socket.io";
+
 import "dotenv/config";
-import { populateSet } from "./util/letters"
-import { generateNumbersSolutions } from "./util/numbers"
+import { populateSet } from "./util/letters";
+import { generateNumbersSolutions } from "./util/numbers";
 
 const log: Logger = new Logger();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const server = createServer(app);
+
+const server: http.Server = http.createServer(app);
+const io: socketio.Server = new socketio.Server();
+io.attach(server);
 
 app.use(cors());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Server is up and running!");
+io.on("connection", (socket: socketio.Socket) => {
+  socket.on(
+    "joinRoom",
+    ({ username, room }: { username: string; room: string }) => {
+      const user = addUser(socket.id, username, room);
+      log.info(users);
+      if (!user) {
+        return;
+      }
+
+      socket.join(user.room);
+      socket.emit("message", `${user.id} joined room ${user.room}`);
+      log.info(`${user.id} joined room ${user.room}`);
+
+      socket.broadcast
+        .to(user.room)
+        .emit("message", `${user.username} has joined the chat`);
+      log.info(`${user.username} has joined the chat`);
+
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
+    }
+  );
+
+  socket.on("chatMessage", (msg: string) => {
+    const user = getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit("message", `${user.username}: ${msg}`);
+      log.info(`${user.username}: ${msg}`);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    const user = removeUser(socket.id);
+    if (!user) {
+      return;
+    }
+
+    io.to(user.room).emit("message", `${user.username} has left the chat`);
+    log.info(`${user.username} has left the chat`);
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
+  });
+});
+
+app.get("/", (_: Request, res: Response) => {
+  res.sendFile(__dirname + "/index.html");
 });
 
 app.get("/wordsolutionrequest/:chars", (req: Request, res: Response) => {
-
   if (req.params.chars.length > 9) {
-    res.status(400).send("Fuck you bastard");
+    res.status(400).send("Letters too long");
   }
-  const perms = populateSet(req.params.chars)
+  const perms = populateSet(req.params.chars);
   res.send(perms);
 });
 
-app.get("/numbersolutionrequest/:nums/:target", (req: Request, res: Response) => {
+app.get(
+  "/numbersolutionrequest/:nums/:target",
+  (req: Request, res: Response) => {
+    if (req.params.nums == undefined || req.params.target == undefined) {
+      res.status(400).send("Fuck you bastard");
+    }
+    const nums = req.params.nums.split(",").map((a) => parseInt(a));
+    const target = parseInt(req.params.target);
+    const solutions = generateNumbersSolutions(nums, target);
 
-  // const bod = res.json({ requestBody: req.body })
-  if (req.params.nums == undefined || req.params.target == undefined) {
-    res.status(400).send("Fuck you bastard");
+    res.send(solutions);
   }
-  const nums = req.params.nums.split(",").map(a => parseInt(a));
-  const target = parseInt(req.params.target);
-  const solutions = generateNumbersSolutions(nums, target)
-
-  res.send(solutions);
-});
-
+);
 
 app.listen(port, () => {
   log.info(`Server started at http://localhost:${port}`);
 });
-
-
