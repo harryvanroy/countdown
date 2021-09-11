@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { User } from "../../../common/socket";
 import { useGame } from "../context/game";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { Box, Paper, Button, Typography } from "@material-ui/core";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     backgroundColor: "rgb(43, 86, 163)",
     height: "100vh",
@@ -20,7 +24,12 @@ const useStyles = makeStyles({
     float: "left",
     width: "180px",
   },
-});
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+})
+);
 
 export type LobbyProps = {
   roomId: string;
@@ -28,9 +37,24 @@ export type LobbyProps = {
 
 const Lobby = () => {
   const game = useGame();
-  const [users, setUsers] = useState<User[]>([]);
-
   const classes = useStyles();
+  const [users, setUsers] = useState<User[]>([]);
+  const [gameType, setGameType] = React.useState<string>('numbers');
+  const [open, setOpen] = React.useState(false);
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setGameType(event.target.value as string);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+
   /*   const [letterRounds, setLetterRounds] = useState(2);
   const [numberRounds, setNumberRounds] = useState(2); */
 
@@ -66,8 +90,9 @@ const Lobby = () => {
 
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
+    console.log(gameType)
     const body = {
-      mode: "numbers",
+      mode: gameType,
     };
 
     socket?.emit("startGame", body, (response: any) => {
@@ -97,6 +122,23 @@ const Lobby = () => {
             <li key={index}>{user.username}</li>
           ))}
         </ul>
+        <div>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-controlled-open-select-label">Numbers</InputLabel>
+            <Select
+              labelId="demo-controlled-open-select-label"
+              id="demo-controlled-open-select"
+              open={open}
+              onClose={handleClose}
+              onOpen={handleOpen}
+              value={gameType}
+              onChange={handleChange}
+            >
+              <MenuItem value="numbers">Numbers</MenuItem>
+              <MenuItem value="letters">Letters</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
         <Button variant="contained" onClick={onStartGame} fullWidth>
           Start game
         </Button>

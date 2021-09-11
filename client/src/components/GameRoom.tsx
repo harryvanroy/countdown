@@ -1,6 +1,7 @@
 import React from "react";
 import { useGame } from "../context/game";
 import { Numbers } from "./Numbers";
+import { Letters } from "./Letters";
 import Podium from "./Podium";
 
 const GameRoom = () => {
@@ -9,7 +10,7 @@ const GameRoom = () => {
 
   switch (mode) {
     case "letters":
-      return <h1>Letters</h1>;
+      return <Letters />;
     case "numbers":
       return <Numbers />;
     case "podium":
