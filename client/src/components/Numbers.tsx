@@ -17,7 +17,6 @@ export const Numbers = () => {
   const classes = useStyles();
   const game = useGame();
   const [answer, setAnswer] = useState("");
-  const [currentTotal, setTotal] = useState(0);
   const [seconds, setSeconds] = useState(game?.state.time === undefined ? 30 : parseInt(game.state.time));
 
 

@@ -106,12 +106,13 @@ io.on(
         }
       } else if (room.gameMode == "numbers") {
         const answerSafe = guess.replace(/[^-()\d/*+.]/g, "");
+        // eslint-disable-next-line no-useless-escape
         const numb = guess.match(/(\d[\d\.]*)/g)?.map(a => parseInt(a));
         const selection = room.selection as number[];
 
         if (answerSafe && room.targetNum && numb !== undefined
           && numb.every(val => selection.includes(val))) {
-          room.leaderboard[user.username]["score"] = 10 - Math.abs(eval(answerSafe) - room.targetNum)
+          room.leaderboard[user.username]["score"] = Math.max(10 - Math.abs(eval(answerSafe) - room.targetNum), 0)
         }
       }
       io.to(user.roomID).emit("chatMessage", {

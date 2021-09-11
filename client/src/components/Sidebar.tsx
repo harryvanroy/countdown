@@ -7,7 +7,7 @@ import { ListItem, ListItemText } from "@material-ui/core";
 
 const Chat = () => {
   const game = useGame();
-  const [messages, setMessages] = useState<{username: string, message: string}[]>([])
+  const [messages, setMessages] = useState<{ username: string, message: string }[]>([])
   const [message, setMessage] = useState("")
 
   const socket = game?.state?.socket;
@@ -28,21 +28,21 @@ const Chat = () => {
   // TODO: fix text align
   return (
     <>
-      <ul style={{listStyleType: "none", paddingLeft: 5}}>
-        {messages.map(({username, message}, index) => {
+      <ul style={{ listStyleType: "none", paddingLeft: 5 }}>
+        {messages.map(({ username, message }, index) => {
           const entry = `${username}:${message}`
-          const align = username === game?.state?.username 
+          const align = username === game?.state?.username
             ? "right" : "left";
 
           return (
-            <li key={index} style={{listStyleType: "none"}}>
-              <p style={{textAlign: align}}>{entry}</p>
+            <li key={index} style={{ listStyleType: "none" }}>
+              <p style={{ textAlign: align }}>{entry}</p>
             </li>
           )
         })}
       </ul>
       <input type="text" placeholder={"Chat here"} onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={onSendMessage}/>
+        onKeyDown={onSendMessage} />
     </>
   )
 }
@@ -65,13 +65,13 @@ const Sidebar = () => {
   return (
     <>
       <Grid container>
-        <Grid item xs={4}>
-          <Leaderboard/>
+        <Grid item xs={1}>
+          <Leaderboard />
         </Grid>
       </Grid>
       <Grid container>
-        <Grid item xs={4}>
-          <Chat/>
+        <Grid item xs={9}>
+          <Chat />
         </Grid>
       </Grid>
     </>

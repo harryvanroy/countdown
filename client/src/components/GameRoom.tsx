@@ -27,13 +27,13 @@ const GameArea = () => {
 const GameRoom = () => {
   return (
     <Grid container spacing={0}>
-      <Grid item xs={9}>
+      <Grid item xs={8}>
         <GameArea />
       </Grid>
       <Grid item xs={2}>
         <Sidebar />
       </Grid>
-    </Grid>
+    </Grid >
   );
 };
 
