@@ -58,7 +58,7 @@ const Home = () => {
       transports: ["websocket", "polling", "flashsocket"],
     });
     game?.updateState({ socket });
-  }, [game]);
+  }, []);
 
   const onCreateRoom = (_: any) => {
     if (username === "") {

@@ -55,9 +55,6 @@ const Lobby = () => {
     setOpen(true);
   };
 
-  /*   const [letterRounds, setLetterRounds] = useState(2);
-  const [numberRounds, setNumberRounds] = useState(2); */
-
   useEffect(() => {
     if (game?.state.username) {
       setUsers([game?.state.username]);
