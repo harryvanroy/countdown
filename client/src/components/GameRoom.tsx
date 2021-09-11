@@ -14,7 +14,7 @@ const GameArea = () => {
 
   switch (mode) {
     case "letters":
-      return <Letters/>;
+      return <Letters />;
     case "numbers":
       return <Numbers />;
     case "podium":

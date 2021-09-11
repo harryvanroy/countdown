@@ -19,7 +19,7 @@ import {
 const log: Logger = new Logger();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 
 const server: http.Server = http.createServer(app);
 const io: socketio.Server = new socketio.Server();
@@ -79,11 +79,9 @@ io.on(
         user,
       });
 
-      io.to(user.roomID).emit("message", `${user.username} joined the lobby`);
       log.info(`${user.username} joined the lobby`);
 
       io.to(user.roomID).emit("roomUsers", {
-        room: user.roomID,
         users: getUsersInRoom(user.roomID),
       });
     });
@@ -131,7 +129,6 @@ io.on(
       io.to(user.roomID).emit("message", `${user.username} has left the lobby`);
       log.info(`${user.username} has left the lobby`);
       io.to(user.roomID).emit("roomUsers", {
-        room: user.roomID,
         users: getUsersInRoom(user.roomID),
       });
     });
@@ -169,5 +166,5 @@ server.listen(port, () => {
 });
 
 const generateRoomID = () => {
-  return crypto.randomBytes(16).toString("base64");
+  return crypto.randomBytes(8).toString("hex");
 };
