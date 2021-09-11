@@ -23,20 +23,22 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
-  socket.on("createRoom", ({ username }: { username: string }) => {
+  socket.on("createRoom", ({ username, callback }: any) => {
     const room = generateroomID();
 
     if (username) {
       const user = addUser(socket.id, username, room, true);
       if (user) {
         socket.join(user.roomID);
-        io.to(user.roomID).emit(
-          "message",
-          `${user.username} created room ${user.roomID}`
-        );
-        log.info(`${user.username} created room ${user.roomID}`);
+        callback({
+          user,
+        });
+        return;
       }
     }
+    callback({
+      error: "Room not created",
+    });
   });
 
   socket.on(
