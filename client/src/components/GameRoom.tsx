@@ -1,11 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { useGame } from '../context/game';
+import Numbers, { SimpleCard } from './Numbers'
 
 const GameRoom = () => {
+  const game = useGame();
+
   return (
-    <Router>
-      <h1>Game room</h1>
-    </Router>
+    game?.state.gameMode === 'letters' ? 
+      <h1>Game room (letters)</h1> :
+      <>
+        <Numbers />
+        <SimpleCard />
+      </>
   );
 };
 
