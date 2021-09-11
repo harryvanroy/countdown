@@ -7,12 +7,22 @@ const Podium = () => {
   const game = useGame();
   const leaderboard = game?.state.leaderboard;
   let items = []
+  let elems = []
   if (leaderboard !== undefined) {
     for (const user in leaderboard) {
-      items.push(<li>{user + ": "
-        + leaderboard[user]["guess"]
-        + " scoring " + leaderboard[user]["score"]}
-      </li>)
+      items.push({
+        user: user,
+        guess: leaderboard[user]["guess"],
+        score: leaderboard[user]["score"]
+      })
+    }
+    items.sort((o1, o2) => {
+      return (o2["score"] < o1["score"]) ? -1 : 1;
+    })
+
+    for (const a of items) {
+      elems.push(<li>{a["user"] + ": came up with "
+        + a["guess"] + " scoring " + a["score"]}</li>)
     }
   }
 
@@ -21,19 +31,12 @@ const Podium = () => {
     game?.updateState({
       gameStarted: false
     });
-    // socket?.emit("joinRoom", (game?.state.), (response: any) => {
-    //   const { error, user } = response || {};
-    //   game?.updateState({
-    //     username: game.state || "",
-    //     roomId: roomId,
-    //   });
-    // });
   };
 
 
   return (
     <Box>
-      <ol>{items}</ol>
+      <ol>{elems}</ol>
       <h2>Possible Solution:</h2>
       <p>{game?.state.solutions?.join(" ")}</p>
       <Button
