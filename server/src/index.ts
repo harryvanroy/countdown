@@ -65,6 +65,19 @@ io.on("connection", (socket: socketio.Socket) => {
     });
   });
 
+  socket.on("startGame", (data, callback) => {
+    const user = getUser(socket.id);
+    if (!user || !user.isHost) {
+      callback({
+        error: "Invalid user: can't start game."
+      })
+      return
+    }
+
+    io.to(user.roomID).emit("startGame");
+    log.info(`${user.username} started a game.`);
+  })
+
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
     if (!user) {
