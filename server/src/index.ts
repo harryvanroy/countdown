@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { Logger } from "tslog";
-import { addUser, getUser, removeUser, getUsersInRoom, users } from "./users";
+import { addUser, getUser, removeUser, getUsersInRoom } from "./users";
 import * as http from "http";
 import * as socketio from "socket.io";
 import crypto from "crypto";
@@ -24,9 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }, callback) => {
-    console.log({ username });
     const room = generateRoomID();
-
+    console.log("wat");
     if (username) {
       const user = addUser(socket.id, username, room, true);
       if (user) {

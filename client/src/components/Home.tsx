@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useGame } from "../context/game";
-import io, { Socket } from "socket.io-client";
+import io from "socket.io-client";
 
 const Home = () => {
   const game = useGame();
   const [username, setUsername] = useState("");
 
-  const initSocket = () => {
-    if (game && !game.state.socket) {
-      const socket = io(`http://localhost`, {
-        transports: ["websocket", "polling", "flashsocket"],
-      });
-      game.updateState({ socket });
-    }
-  };
+  useEffect(() => {
+    const socket = io(`http://localhost:8080`, {
+      transports: ["websocket", "polling", "flashsocket"],
+    });
+    game?.updateState({ socket });
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   const onCreateRoom = (_: any) => {
     if (username === "") {
@@ -21,18 +22,16 @@ const Home = () => {
       return;
     }
 
-    initSocket();
     const socket = game?.state.socket;
     socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
-      console.log(response)
+      console.log(response);
 
       if (error) {
         alert(error);
       } else {
-        const { username, roomID, isHost } = user;
         game?.updateState({
-          roomId: roomID,
+          roomId: user.roomID,
         });
       }
     });

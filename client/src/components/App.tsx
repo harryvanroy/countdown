@@ -1,7 +1,6 @@
 import React from "react";
 import Home from "./Home";
-import { Numbers, SimpleCard } from "../numbers";
-import Lobby, { LobbyProps } from "./Lobby";
+import Lobby from "./Lobby";
 import GameRoom from "./GameRoom";
 import { GameContextProvider, useGame } from "../context/game";
 
