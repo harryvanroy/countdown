@@ -72,11 +72,9 @@ io.on(
         user,
       });
 
-      io.to(user.roomID).emit("message", `${user.username} joined the lobby`);
       log.info(`${user.username} joined the lobby`);
 
       io.to(user.roomID).emit("roomUsers", {
-        room: user.roomID,
         users: getUsersInRoom(user.roomID),
       });
     });
@@ -131,7 +129,6 @@ io.on(
       io.to(user.roomID).emit("message", `${user.username} has left the lobby`);
       log.info(`${user.username} has left the lobby`);
       io.to(user.roomID).emit("roomUsers", {
-        room: user.roomID,
         users: getUsersInRoom(user.roomID),
       });
     });

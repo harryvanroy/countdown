@@ -1,6 +1,7 @@
 // what server sends to clients
 export type ServerSideEvents = {
   message: (data: string, callback: any) => void;
+  roomUsers: (data: { users: User[] }, callback: any) => void;
   startGame: (
     data:
       | {
@@ -52,3 +53,9 @@ export type ServerListenEvents = ClientEmitEvents;
 export type ServerEmitEvents = {
   [key: string]: (...args: any[]) => void;
 };
+
+export interface User {
+  username: string;
+  roomID: string;
+  isHost: boolean;
+}

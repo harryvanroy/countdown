@@ -140,7 +140,7 @@ const Home = () => {
             <TextField
               id="roomID"
               name="roomID"
-              placeholder="Enter room ID"
+              placeholder="Enter RoomID"
               className={classes.roomInput}
               onChange={(e) => setRoomId(e.target.value)}
             />
