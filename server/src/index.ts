@@ -24,8 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }, callback) => {
-    console.log({username})
-    const room = generateroomID();
+    console.log({ username });
+    const room = generateRoomID();
 
     if (username) {
       const user = addUser(socket.id, username, room, true);
@@ -118,6 +118,6 @@ server.listen(port, () => {
   log.info(`Server started at http://localhost:${port}`);
 });
 
-const generateroomID = () => {
+const generateRoomID = () => {
   return crypto.randomBytes(16).toString("base64");
 };
