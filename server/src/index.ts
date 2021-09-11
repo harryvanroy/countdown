@@ -19,7 +19,7 @@ import {
 const log: Logger = new Logger();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 
 const server: http.Server = http.createServer(app);
 const io: socketio.Server = new socketio.Server();
