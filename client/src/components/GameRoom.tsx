@@ -3,7 +3,6 @@ import { useGame } from "../context/game";
 import { Numbers } from "./Numbers";
 import { Letters } from "./Letters";
 import Sidebar from "./Sidebar";
-import Chat from "./Chat";
 import Podium from "./Podium";
 
 import Grid from "@material-ui/core/Grid";
@@ -26,15 +25,12 @@ const GameArea = () => {
 
 const GameRoom = () => {
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={3}>
-        <Sidebar></Sidebar>
-      </Grid>
-      <Grid item xs={6}>
+    <Grid container spacing={0}>
+      <Grid item xs={9}>
         <GameArea />
       </Grid>
-      <Grid item xs={3}>
-        <Chat></Chat>
+      <Grid item xs={2}>
+        <Sidebar />
       </Grid>
     </Grid>
   );

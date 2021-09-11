@@ -60,8 +60,9 @@ export const Numbers = () => {
         </Button>
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
-        <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>
         <p>Seconds left: {seconds} </p>
+        {seconds === 0 && <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>}
+        <Box></Box>
       </Paper>
     </Box>
   );

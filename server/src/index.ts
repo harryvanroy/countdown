@@ -17,6 +17,7 @@ import crypto from "crypto";
 import "dotenv/config";
 import { populateSet } from "./util/letters";
 import { generateNumbersSolutions } from "./util/numbers";
+import { sampleLetters } from "./util/sampleLetters";
 
 import {
   ServerListenEvents,
@@ -27,7 +28,7 @@ import {
 const log: Logger = new Logger();
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5000;
 
 const server: http.Server = http.createServer(app);
 const io: socketio.Server = new socketio.Server();
@@ -169,7 +170,7 @@ io.on(
 
         log.info(`${user.username} started a game.`);
       } else if (mode === "letters") {
-        const selection = "abcdefghi";
+        const selection = sampleLetters(3, 6);
         const solutions = populateSet(selection);
 
         const room = getRoom(user.roomID);
