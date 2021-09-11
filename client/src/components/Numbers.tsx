@@ -22,9 +22,15 @@ export const Numbers = () => {
 
 
   const handleCheckAnswer = () => {
-    const answerSafe = answer.replace(/[^-()\d/*+.]/g, "");
-    console.log(answerSafe);
-    setTotal(eval(answerSafe));
+    const socket = game?.state.socket;
+
+    socket?.emit("numbersGuess", answer, (response: any) => {
+      const { error } = response || {};
+
+      if (error) {
+        alert(error);
+      }
+    });
   };
 
   const handleAnswerChange = (event: any) => {
@@ -44,7 +50,6 @@ export const Numbers = () => {
     <Box className={classes.root}>
       <Paper>
         <TextField
-          id="outlined-multiline-static"
           multiline
           rows={3}
           value={answer}
@@ -56,9 +61,8 @@ export const Numbers = () => {
         </Button>
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
-        <p>Current value: {currentTotal}</p>
         <p>Seconds left: {seconds} </p>
-        {seconds === 0 && (<p>Solutions {game?.state.solutions?.slice(0, 1)}</p>)}
+        {seconds === 0 && <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>}
         <Box></Box>
       </Paper>
     </Box>

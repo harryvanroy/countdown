@@ -5,9 +5,11 @@ interface User {
 }
 
 interface Room {
-  status: "letters" | "numbers";
-  selections: string[] | number[];
-  solutions: string[];
+  gameStarted: boolean;
+  gameMode: "letters" | "numbers" | "podium" | null;
+  solutions: string[] | null;
+  selection: number[] | string | null;
+  targetNum: number | null;
 }
 
 export const rooms: Record<string, Room> = {};
@@ -58,4 +60,12 @@ export const getUsersInRoom = (roomId: string): User[] => {
     }
   }
   return usersInRoom;
+};
+
+export const addRoom = (id: string, room: Room): void => {
+  rooms[id] = room;
+};
+
+export const getRoom = (id: string): Room => {
+  return rooms[id];
 };

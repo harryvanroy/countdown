@@ -58,7 +58,7 @@ export const Letters = () => {
                 <p>Selection: {game?.state.selection} </p>
                 <p>Points Scored: {currentScore} </p>
                 <p>Seconds left: {seconds} </p>
-                {seconds === 0 && (<p>Solutions: {game?.state.solutions?.join(" ")}</p>)}
+                {seconds === 0 && <p>Solutions: {game?.state.solutions?.join(" ")}</p>}
                 <Box></Box>
             </Paper>
         </Box>
