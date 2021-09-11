@@ -9,7 +9,7 @@ const Home = () => {
 
   const initSocket = () => {
     if (game && !game.state.socket) {
-      const socket = io(`http://${window.location.hostname}:3000`);
+      const socket = io(`http://${window.location.hostname}:5000`);
       game.updateState({socket});
     }
   }
