@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }, callback) => {
     const room = generateRoomID();
-    console.log("wat");
+
     if (username) {
       const user = addUser(socket.id, username, room, true);
       if (user) {
@@ -41,42 +41,28 @@ io.on("connection", (socket: socketio.Socket) => {
     });
   });
 
-  socket.on(
-    "joinRoom",
-    ({ username, room }, callback) => {
-      const user = addUser(socket.id, username, room, false);
+  socket.on("joinRoom", ({ username, room }, callback) => {
+    const user = addUser(socket.id, username, room, false);
 
-      if (!user) {
-        callback({
-          error: "Couldn't join room."
-        })
-        return;
-      }
-
-      socket.join(user.roomID);
+    if (!user) {
       callback({
-        user
-      })
-
-      io.to(user.roomID).emit(
-        "message",
-        `${user.username} joined room ${user.roomID}`
-      );
-      log.info(`${user.username} joined room ${user.roomID}`);
-
-      io.to(user.roomID).emit("roomUsers", {
-        room: user.roomID,
-        users: getUsersInRoom(user.roomID),
+        error: "Couldn't join room.",
       });
+      return;
     }
-  );
 
-  socket.on("chatMessage", ({ msg }: { msg: string }) => {
-    const user = getUser(socket.id);
-    if (user) {
-      io.to(user.roomID).emit("message", `${user.username}: ${msg}`);
-      log.info(`${user.username}: ${msg}`);
-    }
+    socket.join(user.roomID);
+    callback({
+      user,
+    });
+
+    io.to(user.roomID).emit("message", `${user.username} joined the lobby`);
+    log.info(`${user.username} joined the lobby`);
+
+    io.to(user.roomID).emit("roomUsers", {
+      room: user.roomID,
+      users: getUsersInRoom(user.roomID),
+    });
   });
 
   socket.on("disconnect", () => {
@@ -85,8 +71,8 @@ io.on("connection", (socket: socketio.Socket) => {
       return;
     }
 
-    io.to(user.roomID).emit("message", `${user.username} has left the chat`);
-    log.info(`${user.username} has left the chat`);
+    io.to(user.roomID).emit("message", `${user.username} has left the lobby`);
+    log.info(`${user.username} has left the lobby`);
     io.to(user.roomID).emit("roomUsers", {
       room: user.roomID,
       users: getUsersInRoom(user.roomID),

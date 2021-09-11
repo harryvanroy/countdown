@@ -12,9 +12,6 @@ const Home = () => {
       transports: ["websocket", "polling", "flashsocket"],
     });
     game?.updateState({ socket });
-    return () => {
-      socket.close();
-    };
   }, []);
 
   const onCreateRoom = (_: any) => {
