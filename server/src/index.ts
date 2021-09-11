@@ -4,10 +4,12 @@ import { Logger } from "tslog";
 import { addUser, getUser, removeUser, getUsersInRoom, users } from "./users";
 import * as http from "http";
 import * as socketio from "socket.io";
+import crypto from "crypto";
 
 import "dotenv/config";
 import { populateSet } from "./util/letters";
 import { generateNumbersSolutions } from "./util/numbers";
+import { notDeepEqual } from "assert";
 
 const log: Logger = new Logger();
 
@@ -22,10 +24,25 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
+  console.log("connected");
+  socket.on("createRoom", ({ username }: { username: string }) => {
+    const room = generateRoomId();
+
+    let user;
+    if (username) {
+      user = addUser(socket.id, username, room, true);
+    }
+    log.info(users);
+
+    if (!user) {
+      return;
+    }
+    socket.join(user.room);
+  });
   socket.on(
     "joinRoom",
     ({ username, room }: { username: string; room: string }) => {
-      const user = addUser(socket.id, username, room);
+      const user = addUser(socket.id, username, room, false);
       log.info(users);
       if (!user) {
         return;
@@ -35,11 +52,6 @@ io.on("connection", (socket: socketio.Socket) => {
       socket.emit("message", `${user.id} joined room ${user.room}`);
       log.info(`${user.id} joined room ${user.room}`);
 
-      socket.broadcast
-        .to(user.room)
-        .emit("message", `${user.username} has joined the chat`);
-      log.info(`${user.username} has joined the chat`);
-
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getUsersInRoom(user.room),
@@ -47,7 +59,7 @@ io.on("connection", (socket: socketio.Socket) => {
     }
   );
 
-  socket.on("chatMessage", (msg: string) => {
+  socket.on("chatMessage", ({ msg }: { msg: string }) => {
     const user = getUser(socket.id);
     if (user) {
       io.to(user.room).emit("message", `${user.username}: ${msg}`);
@@ -71,7 +83,7 @@ io.on("connection", (socket: socketio.Socket) => {
 });
 
 app.get("/", (_: Request, res: Response) => {
-  res.sendFile(__dirname + "/index.html");
+  res.send("Hello");
 });
 
 app.get("/wordsolutionrequest/:chars", (req: Request, res: Response) => {
@@ -96,6 +108,10 @@ app.get(
   }
 );
 
-app.listen(port, () => {
+server.listen(port, () => {
   log.info(`Server started at http://localhost:${port}`);
 });
+
+const generateRoomId = () => {
+  return crypto.randomBytes(16).toString("base64");
+};

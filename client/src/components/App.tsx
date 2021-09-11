@@ -3,7 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Home from "./Home";
-import { Numbers, SimpleCard } from "./numbers";
+import { Numbers, SimpleCard } from "../numbers";
 import Lobby, { LobbyProps } from "./Lobby";
 import GameRoom from "./GameRoom";
 

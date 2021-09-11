@@ -2,6 +2,7 @@ interface User {
   id: string;
   username: string;
   room: string;
+  isHost: boolean;
 }
 
 export const users: User[] = [];
@@ -9,7 +10,8 @@ export const users: User[] = [];
 export const addUser = (
   id: string,
   username: string,
-  room: string
+  room: string,
+  isHost: boolean
 ): User | undefined => {
   username = username.trim().toLowerCase();
   room = room.trim().toLowerCase();
@@ -21,7 +23,7 @@ export const addUser = (
     return;
   }
 
-  const user = { id, username, room };
+  const user = { id, username, room, isHost };
   users.push(user);
 
   return user;

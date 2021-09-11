@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 export type LobbyProps = {
-  roomId: string
-}
+  roomId: string;
+};
 
 const Lobby = (props: LobbyProps) => {
   return (
@@ -10,7 +10,7 @@ const Lobby = (props: LobbyProps) => {
       <h1>Lobby</h1>
       <h2>{props.roomId}</h2>
     </>
-  )
-}
+  );
+};
 
-export default Lobby
+export default Lobby;
