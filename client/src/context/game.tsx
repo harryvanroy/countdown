@@ -1,9 +1,10 @@
 import React, { useContext, createContext, useState } from "react";
 import { Socket } from "socket.io-client";
+import { ClientListenEvents, ClientEmitEvents } from '../../../common/socket'
 
 type State = {
   roomId: string | null;
-  socket: Socket | null;
+  socket: Socket<ClientListenEvents, ClientEmitEvents> | null;
   isHost: boolean;
   gameStarted: boolean;
   gameMode: "letters" | "numbers" | "podium" | null;
