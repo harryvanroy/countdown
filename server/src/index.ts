@@ -1,7 +1,15 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { Logger } from "tslog";
-import { addUser, getUser, removeUser, getUsersInRoom } from "./users";
+import {
+  addUser,
+  getUser,
+  removeUser,
+  getUsersInRoom,
+  addRoom,
+  getRoom,
+  rooms,
+} from "./users";
 import * as http from "http";
 import * as socketio from "socket.io";
 import crypto from "crypto";
@@ -57,6 +65,15 @@ io.on(
             user,
           });
 
+          const room = {
+            gameStarted: false,
+            gameMode: null,
+            solutions: null,
+            selection: null,
+            targetNum: null,
+          };
+          addRoom(user.roomID, room);
+
           io.to(user.roomID).emit("roomUsers", {
             users: getUsersInRoom(user.roomID),
           });
@@ -68,6 +85,29 @@ io.on(
       callback({
         error: "Room not created",
       });
+    });
+
+    socket.on("numbersGuess", (guess, callback) => {
+      const guessReg = guess.replace(/[^-()\d/*+.]/g, "");
+      const total = parseInt(eval(guessReg));
+
+      const user = getUser(socket.id);
+      const room = getRoom(user.roomID);
+
+      if (isNaN(total)) {
+        callback({
+          error: "Not a valid expression",
+        });
+      } else {
+        if (room.targetNum) {
+          io.to(user.roomID).emit("chatMessage", {
+            username: "server",
+            message: `${user.username}'s guess is off by ${
+              room.targetNum - total
+            }`,
+          });
+        }
+      }
     });
 
     socket.on("joinRoom", ({ username, room }, callback) => {
@@ -110,6 +150,15 @@ io.on(
 
         const target = Math.floor(Math.random() * 1000);
         const solutions = generateNumbersSolutions(selection, target);
+        const room = getRoom(user.roomID);
+        addRoom(user.roomID, {
+          ...room,
+          gameMode: "numbers",
+          gameStarted: true,
+          solutions,
+          selection,
+          targetNum: target,
+        });
 
         io.to(user.roomID).emit("startGame", {
           mode,
@@ -117,10 +166,20 @@ io.on(
           target,
           solutions,
         });
+
         log.info(`${user.username} started a game.`);
       } else if (mode === "letters") {
         const selection = "abcdefghi";
         const solutions = populateSet(selection);
+
+        const room = getRoom(user.roomID);
+        addRoom(user.roomID, {
+          ...room,
+          gameMode: "letters",
+          gameStarted: true,
+          solutions,
+          selection,
+        });
 
         io.to(user.roomID).emit("startGame", {
           mode,

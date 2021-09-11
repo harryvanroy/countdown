@@ -15,16 +15,21 @@ const useStyles = makeStyles({
 
 export const Numbers = () => {
   const [answer, setAnswer] = useState("");
-  const [currentTotal, setTotal] = useState(0);
   const [seconds, setSeconds] = useState(60);
 
   const classes = useStyles();
   const game = useGame();
 
   const handleCheckAnswer = () => {
-    const answerSafe = answer.replace(/[^-()\d/*+.]/g, "");
-    console.log(answerSafe);
-    setTotal(eval(answerSafe));
+    const socket = game?.state.socket;
+
+    socket?.emit("numbersGuess", answer, (response: any) => {
+      const { error } = response || {};
+
+      if (error) {
+        alert(error);
+      }
+    });
   };
 
   const handleAnswerChange = (event: any) => {
@@ -44,7 +49,6 @@ export const Numbers = () => {
     <Box className={classes.root}>
       <Paper>
         <TextField
-          id="outlined-multiline-static"
           multiline
           rows={3}
           value={answer}
@@ -56,10 +60,8 @@ export const Numbers = () => {
         </Button>
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
-        <p>Current value: {currentTotal}</p>
         <p>Solutions {game?.state.solutions?.slice(0, 1)}</p>
         <p>Seconds left: {seconds} </p>
-        <Box></Box>
       </Paper>
     </Box>
   );
