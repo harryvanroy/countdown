@@ -1,10 +1,10 @@
 import React from "react";
-import logo from "./logo.svg";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Home from "./Home";
 import { Numbers, SimpleCard } from "../numbers";
 import Lobby, { LobbyProps } from "./Lobby";
 import GameRoom from "./GameRoom";
-import { GameContextProvider, useGame } from '../context/game';
+import { GameContextProvider, useGame } from "../context/game";
 
 const ContextApp = () => {
   const game = useGame();
@@ -12,18 +12,16 @@ const ContextApp = () => {
   const { roomId, gameStarted } = game?.state || {};
 
   if (roomId) {
-    return gameStarted ? <GameRoom/> : <Lobby/>
-  } 
+    return gameStarted ? <GameRoom /> : <Lobby />;
+  }
 
-  return (
-    <Home/>
-  )
-}
+  return <Home />;
+};
 
 function App() {
   return (
     <GameContextProvider>
-      <ContextApp/>
+      <ContextApp />
     </GameContextProvider>
   );
 }

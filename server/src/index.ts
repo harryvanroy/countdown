@@ -26,27 +26,24 @@ io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }: { username: string }) => {
     const room = generateroomID();
 
-    let user;
     if (username) {
-      user = addUser(socket.id, username, room, true);
+      const user = addUser(socket.id, username, room, true);
+      if (user) {
+        socket.join(user.roomID);
+        io.to(user.roomID).emit(
+          "message",
+          `${user.username} created room ${user.roomID}`
+        );
+        log.info(`${user.username} created room ${user.roomID}`);
+      }
     }
-    log.info(users);
-
-    if (!user) {
-      return;
-    }
-    socket.join(user.roomID);
-    io.to(user.roomID).emit(
-      "message",
-      `${user.username} created room ${user.roomID}`
-    );
-    log.info(`${user.username} created room ${user.roomID}`);
   });
+
   socket.on(
     "joinRoom",
     ({ username, room }: { username: string; room: string }) => {
       const user = addUser(socket.id, username, room, false);
-      log.info(users);
+
       if (!user) {
         return;
       }
