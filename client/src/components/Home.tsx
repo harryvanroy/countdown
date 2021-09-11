@@ -27,11 +27,10 @@ const Home = () => {
 
     socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
+      console.log(response)
 
       if (error) {
         alert(error);
-      } else if (!error || !user) {
-        alert("Didn't return user.")
       } else {
         const { username, roomID, isHost } = user;
         game?.updateState({
