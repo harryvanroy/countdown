@@ -1,11 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { useGame } from "../context/game";
 import io from "socket.io-client";
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  TextField,
+  Snackbar,
+} from "@material-ui/core";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import { makeStyles } from "@material-ui/core/styles";
+
+const Alert = (props: JSX.IntrinsicAttributes & AlertProps) => {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: "rgb(43, 86, 163)",
+    height: "100vh",
+  },
+  username: {
+    margin: "10px 0",
+  },
+  content: {
+    padding: "15px",
+    width: "400px",
+  },
+  button: {
+    float: "left",
+    width: "180px",
+  },
+  createRoomButton: {
+    marginBottom: "10px",
+  },
+  roomInput: {
+    float: "right",
+    width: "180px",
+  },
+  joinRoomBox: {
+    width: "100%",
+    marginTop: "10px",
+  },
+});
 
 const Home = () => {
   const game = useGame();
-  const [username, setUsername] = useState("");
-  const [roomId, setRoomId] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [roomId, setRoomId] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const classes = useStyles();
 
   useEffect(() => {
     const socket = io(`http://localhost:8080`, {
@@ -16,17 +62,16 @@ const Home = () => {
 
   const onCreateRoom = (_: any) => {
     if (username === "") {
-      alert("Username is not set");
+      setError("Username is not set");
       return;
     }
 
     const socket = game?.state.socket;
     socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
-      console.log(response);
 
       if (error) {
-        alert(error);
+        setError(error);
       } else {
         game?.updateState({
           roomId: user.roomID,
@@ -42,7 +87,7 @@ const Home = () => {
       const { error, user } = response || {};
 
       if (error) {
-        alert(error);
+        setError(error);
       } else {
         const { username, roomID, isHost } = user;
         game?.updateState({
@@ -52,25 +97,64 @@ const Home = () => {
     });
   };
 
+  const handleClose = () => {
+    setError("");
+  };
+
   return (
-    <>
-      <label htmlFor="username">Username:</label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <button onClick={onCreateRoom}>Create room</button>
-      <label htmlFor="roomId">Room Id:</label>
-      <input
-        type="text"
-        id="roomId"
-        name="roomId"
-        onChange={(e) => setRoomId(e.target.value)}
-      />
-      <button onClick={onJoinRoom}>Join room</button>
-    </>
+    <Box
+      className={classes.root}
+      display="flex"
+      justifyContent="center"
+      alignItems="center">
+      <Paper className={classes.content}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column">
+          <Typography variant="h3">Countdown</Typography>
+          <TextField
+            id="username"
+            name="username"
+            placeholder="Enter username"
+            className={classes.username}
+            fullWidth
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={onCreateRoom}
+            className={classes.createRoomButton}
+            fullWidth>
+            Create room
+          </Button>
+          or
+          <Box className={classes.joinRoomBox}>
+            <Button
+              variant="contained"
+              onClick={onJoinRoom}
+              className={classes.button}>
+              Join room
+            </Button>
+            <TextField
+              id="roomID"
+              name="roomID"
+              placeholder="Enter room ID"
+              className={classes.roomInput}
+              onChange={(e) => setRoomId(e.target.value)}
+            />
+          </Box>
+        </Box>
+      </Paper>
+      {error ? (
+        <Snackbar open={true} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error">
+            {error}
+          </Alert>
+        </Snackbar>
+      ) : null}
+    </Box>
   );
 };
 
