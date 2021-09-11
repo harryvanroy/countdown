@@ -23,7 +23,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
-  socket.on("createRoom", ({ username, callback }: any) => {
+  socket.on("createRoom", ({ username }, callback) => {
+    console.log({username})
     const room = generateroomID();
 
     if (username) {

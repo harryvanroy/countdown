@@ -9,7 +9,9 @@ const Home = () => {
 
   const initSocket = () => {
     if (game && !game.state.socket) {
-      const socket = io(`http://${window.location.hostname}:5000`);
+      const socket = io(`http://${window.location.hostname}:5000`, { 
+        transports: ["websocket", "polling", "flashsocket"] 
+      });
       game.updateState({socket});
     }
   }
@@ -23,7 +25,7 @@ const Home = () => {
     initSocket();
     const socket = game?.state.socket;
 
-    socket?.emit("createRoom", (response: any) => {
+    socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
 
       if (error) {
@@ -36,7 +38,7 @@ const Home = () => {
           roomId: roomID,
         })
       }
-    });    
+    });
   };
 
   return (
