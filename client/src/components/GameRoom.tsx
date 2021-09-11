@@ -1,12 +1,27 @@
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { useGame } from "../context/game";
+import Numbers, { SimpleCard } from "./Numbers";
+import Podium from "./Podium";
 
 const GameRoom = () => {
-  return (
-    <Router>
-      <h1>Game room</h1>
-    </Router>
-  );
+  const game = useGame();
+  const mode = game?.state.gameMode;
+
+  switch (mode) {
+    case "letters":
+      return <h1>Letters</h1>;
+    case "numbers":
+      return (
+        <>
+          <Numbers />
+          <SimpleCard />
+        </>
+      );
+    case "podium":
+      return <Podium />;
+  }
+
+  return <h1>Error</h1>;
 };
 
 export default GameRoom;

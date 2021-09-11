@@ -1,14 +1,18 @@
-import React from "react";
+import React from 'react';
+import { useGame } from '../context/game';
 
 export type LobbyProps = {
   roomId: string;
 };
 
-const Lobby = (props: LobbyProps) => {
+const Lobby = () => {
+  const game = useGame();
+
   return (
     <>
       <h1>Lobby</h1>
-      <h2>{props.roomId}</h2>
+      <h2>Room: {game?.state.roomId}</h2>
+      <h3>Game started? {game?.state.gameStarted ? "y" : "n"}</h3>
     </>
   );
 };
