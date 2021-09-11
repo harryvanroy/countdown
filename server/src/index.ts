@@ -10,6 +10,8 @@ import "dotenv/config";
 import { populateSet } from "./util/letters";
 import { generateNumbersSolutions } from "./util/numbers";
 
+import { ServerListenEvents, ServerEmitEvents, ServerSideEvents } from '../../common/socket'
+
 const log: Logger = new Logger();
 
 const app = express();
@@ -26,7 +28,7 @@ const roomRounds: { [roomId: string]: string[] } = {
 
 }
 
-io.on("connection", (socket: socketio.Socket) => {
+io.on("connection", (socket: socketio.Socket<ServerListenEvents, ServerEmitEvents, ServerSideEvents>) => {
   socket.on("createRoom", ({ username }, callback) => {
     const room = generateRoomID();
 
