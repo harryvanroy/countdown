@@ -10,7 +10,11 @@ import "dotenv/config";
 import { populateSet } from "./util/letters";
 import { generateNumbersSolutions } from "./util/numbers";
 
-import { ServerListenEvents, ServerEmitEvents, ServerSideEvents } from '../../common/socket'
+import {
+  ServerListenEvents,
+  ServerEmitEvents,
+  ServerSideEvents,
+} from "../../common/socket";
 
 const log: Logger = new Logger();
 
@@ -26,94 +30,113 @@ app.use(express.urlencoded({ extended: true }));
 
 const roomRounds: { [roomId: string]: string[] } = {};
 
-io.on("connection", (socket: socketio.Socket<ServerListenEvents, ServerEmitEvents, ServerSideEvents>) => {
-  socket.on("createRoom", ({ username }, callback) => {
-    const room = generateRoomID();
+io.on(
+  "connection",
+  (
+    socket: socketio.Socket<
+      ServerListenEvents,
+      ServerEmitEvents,
+      ServerSideEvents
+    >
+  ) => {
+    socket.on("createRoom", ({ username }, callback) => {
+      const room = generateRoomID();
 
-    if (username) {
-      const user = addUser(socket.id, username, room, true);
-      if (user) {
-        socket.join(user.roomID);
+      if (username) {
+        const user = addUser(socket.id, username, room, true);
+        if (user) {
+          socket.join(user.roomID);
+          callback({
+            user,
+          });
+          return;
+        }
+      }
+      callback({
+        error: "Room not created",
+      });
+    });
+
+    socket.on("joinRoom", ({ username, room }, callback) => {
+      const user = addUser(socket.id, username, room, false);
+
+      if (!user) {
         callback({
-          user,
+          error: "Couldn't join room.",
         });
         return;
       }
-    }
-    callback({
-      error: "Room not created",
-    });
-  });
 
-  socket.on("joinRoom", ({ username, room }, callback) => {
-    const user = addUser(socket.id, username, room, false);
-
-    if (!user) {
+      socket.join(user.roomID);
       callback({
-        error: "Couldn't join room.",
+        user,
       });
-      return;
-    }
 
-    socket.join(user.roomID);
-    callback({
-      user,
+      io.to(user.roomID).emit("message", `${user.username} joined the lobby`);
+      log.info(`${user.username} joined the lobby`);
+
+      io.to(user.roomID).emit("roomUsers", {
+        room: user.roomID,
+        users: getUsersInRoom(user.roomID),
+      });
     });
 
-    io.to(user.roomID).emit("message", `${user.username} joined the lobby`);
-    log.info(`${user.username} joined the lobby`);
+    socket.on("startGame", ({ mode }, callback) => {
+      const user = getUser(socket.id);
+      if (!user || !user.isHost) {
+        callback({
+          error: "Invalid user: can't start game.",
+        });
+        return;
+      }
 
-    io.to(user.roomID).emit("roomUsers", {
-      room: user.roomID,
-      users: getUsersInRoom(user.roomID),
-    });
-  });
-
-  socket.on("startGame", ({ mode }, callback) => {
-    const user = getUser(socket.id);
-    if (!user || !user.isHost) {
-      callback({
-        error: "Invalid user: can't start game.",
-      });
-      return;
-    }
-
-    /*  const { letters, numbers } = rounds;
+      /*  const { letters, numbers } = rounds;
     roomRounds[user.roomID] = [];
     for (let i = 0; i < letters; i++) roomRounds[user.roomID].push("letters");
     for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push("numbers");
 
     const currGameMode = roomRounds[user.roomID].pop(); */
 
-    if (mode === "numbers") {
-      const selection = [1, 2, 5, 9, 50, 100];
-      const target = 500;
-      const solutions = generateNumbersSolutions(selection, target);
+      if (mode === "numbers") {
+        const selection = [1, 2, 5, 9, 50, 100];
+        const target = 500;
+        const solutions = generateNumbersSolutions(selection, target);
 
-      io.to(user.roomID).emit("startGame", {
-        mode,
-        selection,
-        target,
-        solutions,
-      });
-      log.info(`${user.username} started a game.`);
-    }
-  });
+        io.to(user.roomID).emit("startGame", {
+          mode,
+          selection,
+          target,
+          solutions,
+        });
+        log.info(`${user.username} started a game.`);
+      } else if (mode === "letters") {
+        const selection = "abcdefghi";
+        const solutions = populateSet(selection);
 
-  socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-    if (!user) {
-      return;
-    }
-
-    io.to(user.roomID).emit("message", `${user.username} has left the lobby`);
-    log.info(`${user.username} has left the lobby`);
-    io.to(user.roomID).emit("roomUsers", {
-      room: user.roomID,
-      users: getUsersInRoom(user.roomID),
+        io.to(user.roomID).emit("startGame", {
+          mode,
+          selection,
+          solutions,
+        });
+        log.info(`${user.username} started a game.`);
+      }
     });
-  });
-});
+
+    socket.on("disconnect", () => {
+      const user = removeUser(socket.id);
+      if (!user) {
+        return;
+      }
+
+      io.to(user.roomID).emit("message", `${user.username} has left the lobby`);
+      log.info(`${user.username} has left the lobby`);
+      io.to(user.roomID).emit("roomUsers", {
+        room: user.roomID,
+        users: getUsersInRoom(user.roomID),
+      });
+    });
+  }
+);
 
 app.get("/", (_: Request, res: Response) => {
   res.send("Hello");

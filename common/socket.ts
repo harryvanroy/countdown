@@ -1,33 +1,46 @@
 // what server sends to clients
 export type ServerSideEvents = {
-  'message': (data: string, callback: any) => void,
-  'startGame': (data: {
-      gameMode: 'letters',
-      selection: string
-    } | {
-      gameMode: 'numbers',
-      selection: number[],
-      target: number
-  }, callback: any) => void
-}
+  message: (data: string, callback: any) => void;
+  startGame: (
+    data:
+      | {
+          mode: "letters";
+          selection: string[];
+          solutions: string[];
+        }
+      | {
+          mode: "numbers";
+          selection: number[];
+          target: number;
+          solutions: string[];
+        },
+    callback: any
+  ) => void;
+};
 
 // what clients send to server
 export type ClientEmitEvents = {
-  'message': (data: string, callback: any) => void,
-  'createRoom': (data: {
-    username: string
-  }, callback: any) => void,
-  'joinRoom': (data: {
-    username: string,
-    room: string
-  }, callback: any) => void,
-  'startGame': (data: {
-    rounds: {
-      letters: number,
-      numbers: number
-    }
-  }, callback: any) => void
-}
+  message: (data: string, callback: any) => void;
+  createRoom: (
+    data: {
+      username: string;
+    },
+    callback: any
+  ) => void;
+  joinRoom: (
+    data: {
+      username: string;
+      room: string;
+    },
+    callback: any
+  ) => void;
+  startGame: (
+    data: {
+      mode: string;
+    },
+    callback: any
+  ) => void;
+};
 
 // what client receives from server
 export type ClientListenEvents = ServerSideEvents;
@@ -37,5 +50,5 @@ export type ServerListenEvents = ClientEmitEvents;
 
 // not actually used by server.emit!!
 export type ServerEmitEvents = {
-  [key: string]: (...args: any[]) => void
-}
+  [key: string]: (...args: any[]) => void;
+};

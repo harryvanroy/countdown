@@ -17,14 +17,27 @@ const Lobby = () => {
       setMessages([...messages, message]);
     });
 
-    socket?.on("startGame", ({ mode, selection, target, solutions }: any) => {
-      game?.updateState({
-        gameStarted: true,
-        gameMode: mode,
-        selection: selection,
-        targetNum: target,
-        solutions: solutions,
-      });
+    socket?.on("startGame", (data) => {
+      if (data.mode === "letters") {
+        const { mode, selection, solutions } = data;
+
+        game?.updateState({
+          gameStarted: true,
+          gameMode: mode,
+          selection: selection,
+          solutions: solutions,
+        });
+      } else if (data.mode === "numbers") {
+        const { mode, selection, target, solutions } = data;
+
+        game?.updateState({
+          gameStarted: true,
+          gameMode: mode,
+          selection: selection,
+          targetNum: target,
+          solutions: solutions,
+        });
+      }
     });
   }, [game, game?.state.socket, messages]);
 
