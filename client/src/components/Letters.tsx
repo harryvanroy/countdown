@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 export const Letters = () => {
     const [answer, setAnswer] = useState("");
     const [currentScore, setScore] = useState(0);
-    const [seconds, setSeconds] = useState(60);
+    const [seconds, setSeconds] = useState(10);
 
     const classes = useStyles();
     const game = useGame();
@@ -58,10 +58,10 @@ export const Letters = () => {
                     Check answer
                 </Button>
                 <p>Mode: {game?.state.gameMode}</p>
-                <p>Solutions: {game?.state.solutions?.join(" ")}</p>
                 <p>Selection: {game?.state.selection} </p>
-                <p>Points Scored:{currentScore} </p>
+                <p>Points Scored: {currentScore} </p>
                 <p>Seconds left: {seconds} </p>
+                {seconds === 0 && (<p>Solutions: {game?.state.solutions?.join(" ")}</p>)}
                 <Box></Box>
             </Paper>
         </Box>
