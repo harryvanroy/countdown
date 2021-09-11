@@ -37,6 +37,15 @@ io.on(
       ServerSideEvents
     >
   ) => {
+    socket.on("chatMessage", (message, callback) => {
+      const user = getUser(socket.id);
+
+      io.to(user.roomID).emit("chatMessage", {
+        username: user.username,
+        message
+      });
+    })
+
     socket.on("createRoom", ({ username }, callback) => {
       const room = generateRoomID();
 

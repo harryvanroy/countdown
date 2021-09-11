@@ -18,9 +18,11 @@ const ContextApp = () => {
 
 function App() {
   return (
-    <GameContextProvider>
-      <ContextApp />
-    </GameContextProvider>
+    <div style={{textAlign: 'center'}}>
+      <GameContextProvider>
+        <ContextApp />
+      </GameContextProvider>
+    </div>
   );
 }
 

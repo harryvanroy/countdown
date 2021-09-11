@@ -2,9 +2,13 @@ import React from "react";
 import { useGame } from "../context/game";
 import { Numbers } from "./Numbers";
 import Letters from "./Letters";
+import Sidebar from "./Sidebar"
+import Chat from "./Chat"
 import Podium from "./Podium";
 
-const GameRoom = () => {
+import Grid from "@material-ui/core/Grid"
+
+const GameArea = () => {
   const game = useGame();
   const mode = game?.state.gameMode;
 
@@ -17,7 +21,24 @@ const GameRoom = () => {
       return <Podium />;
   }
 
-  return <h1>Error: game started with no gamemode</h1>;
+  return <h1>Unknown game mode</h1>
+}
+
+
+const GameRoom = () => {
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={3}>
+        <Sidebar></Sidebar>
+      </Grid>
+      <Grid item xs={6}>
+        <GameArea/>
+      </Grid>
+      <Grid item xs={3}>
+        <Chat></Chat>
+      </Grid>
+    </Grid>
+  )
 };
 
 export default GameRoom;
