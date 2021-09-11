@@ -1,25 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import Home from './Home';
-import Lobby, { LobbyProps } from './Lobby';
-import GameRoom from './GameRoom';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Home from "./Home";
+import Lobby, { LobbyProps } from "./Lobby";
+import GameRoom from "./GameRoom";
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/:roomId" render={(props) => 
-          <Lobby roomId={props.match.params.roomId}/>}
+        <Route
+          path="/:roomId"
+          render={(props) => <Lobby roomId={props.match.params.roomId} />}
         />
         <Route path="/" exact>
-          <Home/>
+          <Home />
         </Route>
       </Switch>
     </Router>
