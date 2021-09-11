@@ -1,13 +1,13 @@
-import React, { useContext, createContext, useState } from "react";
-import { Socket } from "socket.io-client";
+import React, { useContext, createContext, useState, useEffect } from "react";
+import io, { Socket } from "socket.io-client";
 import { ClientListenEvents, ClientEmitEvents } from "../../../common/socket";
 
 type State = {
   roomId: string | null;
   username: string | null;
+  roomUsers: string[];
   socket: Socket<ClientListenEvents, ClientEmitEvents> | null;
   isHost: boolean;
-  username: string | null;
   gameStarted: boolean;
   gameMode: "letters" | "numbers" | "podium" | null;
   solutions: string[] | null;
@@ -18,8 +18,8 @@ type State = {
 const defaultState: State = {
   roomId: null,
   username: null,
+  roomUsers: [],
   socket: null,
-  username: null,
   isHost: false,
   gameStarted: false,
   gameMode: null,
@@ -41,6 +41,18 @@ type GameContextProviderProps = {
 
 export const GameContextProvider = (props: GameContextProviderProps) => {
   const [state, setState] = useState<State>(defaultState);
+
+  useEffect(() => {
+    const socket = io(`http://localhost:5000`, {
+      transports: ["websocket", "polling", "flashsocket"],
+    });
+    setState({...state, socket})
+  }, []);
+  
+  state?.socket?.on("roomUsers", (data, callback) => {
+    const usernames = data.users.map(user => user.username);
+    setState({...state, roomUsers: usernames})
+  })
 
   const updateState = (newState: Partial<State>) => {
     setState({ ...state, ...newState });

@@ -38,7 +38,6 @@ export type LobbyProps = {
 
 const Lobby = () => {
   const game = useGame();
-  const [users, setUsers] = useState<string[]>([]);
   const classes = useStyles();
 
   const [gameType, setGameType] = React.useState<string>("numbers");
@@ -60,17 +59,7 @@ const Lobby = () => {
   const [numberRounds, setNumberRounds] = useState(2); */
 
   useEffect(() => {
-    if (game?.state.username) {
-      setUsers([game?.state.username]);
-    }
-
-    console.log(game?.state.username);
-
     const socket = game?.state.socket;
-    socket?.on("roomUsers", ({ users }) => {
-      const usernames = users.map((user) => user.username);
-      setUsers(usernames);
-    });
 
     socket?.on("startGame", (data) => {
       if (data.mode === "letters") {
@@ -126,7 +115,7 @@ const Lobby = () => {
         </Typography>
         <Typography variant="h6">Current players:</Typography>
         <ul>
-          {users.map((user, index) => (
+          {game?.state?.roomUsers.map((user, index) => (
             <li key={index}>{user}</li>
           ))}
         </ul>

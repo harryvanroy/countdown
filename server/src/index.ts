@@ -56,9 +56,15 @@ io.on(
           callback({
             user,
           });
+
+          io.to(user.roomID).emit("roomUsers", {
+            users: getUsersInRoom(user.roomID),
+          });
+
           return;
         }
       }
+
       callback({
         error: "Room not created",
       });
