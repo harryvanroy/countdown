@@ -13,6 +13,7 @@ type State = {
   solutions: string[] | null;
   selection: number[] | string[] | null;
   targetNum: number | null;
+  time: string
 };
 
 const defaultState: State = {
@@ -26,6 +27,7 @@ const defaultState: State = {
   solutions: null,
   selection: null,
   targetNum: null,
+  time: "30"
 };
 
 type GameContextValue = {
@@ -46,12 +48,12 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
     const socket = io(`http://localhost:5000`, {
       transports: ["websocket", "polling", "flashsocket"],
     });
-    setState({...state, socket})
+    setState({ ...state, socket })
   }, []);
-  
+
   state?.socket?.on("roomUsers", (data, callback) => {
     const usernames = data.users.map(user => user.username);
-    setState({...state, roomUsers: usernames})
+    setState({ ...state, roomUsers: usernames })
   })
 
   const updateState = (newState: Partial<State>) => {

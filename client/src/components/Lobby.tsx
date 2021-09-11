@@ -40,18 +40,32 @@ const Lobby = () => {
   const classes = useStyles();
 
   const [gameType, setGameType] = React.useState<string>("numbers");
-  const [open, setOpen] = React.useState(false);
+  const [openTime, setOpenTime] = React.useState(false);
+  const [openGame, setOpenGame] = React.useState(false);
+  const [gameTime, setGameTime] = React.useState<string>("30");
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setGameType(event.target.value as string);
+  const handleChange = (event: React.ChangeEvent<{ value: unknown; name?: string | undefined }>) => {
+    if (event.target.name === "gametype") {
+      setGameType(event.target.value as string);
+    } else {
+      setGameTime(event.target.value as string);
+    }
+  };
+
+  const handleCloseTime = () => {
+    setOpenTime(false);
+  };
+
+  const handleOpenTime = () => {
+    setOpenTime(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenGame(false);
   };
 
   const handleOpen = () => {
-    setOpen(true);
+    setOpenGame(true);
   };
 
   useEffect(() => {
@@ -59,16 +73,17 @@ const Lobby = () => {
 
     socket?.on("startGame", (data) => {
       if (data.mode === "letters") {
-        const { mode, selection, solutions } = data;
+        const { mode, selection, solutions, time } = data;
 
         game?.updateState({
           gameStarted: true,
           gameMode: mode,
           selection: selection,
           solutions: solutions,
+          time: time
         });
       } else if (data.mode === "numbers") {
-        const { mode, selection, target, solutions } = data;
+        const { mode, selection, target, solutions, time } = data;
 
         game?.updateState({
           gameStarted: true,
@@ -76,6 +91,7 @@ const Lobby = () => {
           selection: selection,
           targetNum: target,
           solutions: solutions,
+          time: time
         });
       }
     });
@@ -84,8 +100,10 @@ const Lobby = () => {
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
     console.log(gameType);
+    console.log(gameTime)
     const body = {
       mode: gameType,
+      time: gameTime
     };
 
     socket?.emit("startGame", body, (response: any) => {
@@ -109,18 +127,38 @@ const Lobby = () => {
         <Typography variant="caption">
           Send the RoomID to your friends so they can join the lobby.
         </Typography>
-        <FormControl className={classes.formControl}>
-          <InputLabel>Game type</InputLabel>
-          <Select
-            open={open}
-            onClose={handleClose}
-            onOpen={handleOpen}
-            value={gameType}
-            onChange={handleChange}>
-            <MenuItem value="numbers">Numbers</MenuItem>
-            <MenuItem value="letters">Letters</MenuItem>
-          </Select>
-        </FormControl>
+        <div>
+          <FormControl className={classes.formControl}>
+            <InputLabel>Game type</InputLabel>
+            <Select
+              open={openGame}
+              onClose={handleClose}
+              onOpen={handleOpen}
+              name="gametype"
+              value={gameType}
+              onChange={handleChange}>
+              <MenuItem value="numbers">Numbers</MenuItem>
+              <MenuItem value="letters">Letters</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <InputLabel>Time to Play</InputLabel>
+            <Select
+              open={openTime}
+              onClose={handleCloseTime}
+              onOpen={handleOpenTime}
+              name="time"
+              value={gameTime}
+              onChange={handleChange}>
+              <MenuItem value="15">15 seconds</MenuItem>
+              <MenuItem value="30">30 seconds</MenuItem>
+              <MenuItem value="45">45 seconds</MenuItem>
+              <MenuItem value="60">60 seconds</MenuItem>
+              <MenuItem value="90">90 seconds</MenuItem>
+              <MenuItem value="120">120 seconds</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
         <Typography variant="h6">Current players:</Typography>
         <ul>
           {game?.state?.roomUsers.map((user, index) => (

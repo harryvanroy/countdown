@@ -5,16 +5,18 @@ export type ServerSideEvents = {
   startGame: (
     data:
       | {
-          mode: "letters";
-          selection: string[];
-          solutions: string[];
-        }
+        mode: "letters";
+        selection: string[];
+        solutions: string[];
+        time: string;
+      }
       | {
-          mode: "numbers";
-          selection: number[];
-          target: number;
-          solutions: string[];
-        },
+        mode: "numbers";
+        selection: number[];
+        target: number;
+        solutions: string[];
+        time: string;
+      },
     callback: any
   ) => void;
   chatMessage: (
@@ -45,6 +47,7 @@ export type ClientEmitEvents = {
   startGame: (
     data: {
       mode: string;
+      time: string;
     },
     callback: any
   ) => void;

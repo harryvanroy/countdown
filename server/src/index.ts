@@ -93,7 +93,9 @@ io.on(
       });
     });
 
-    socket.on("startGame", ({ mode }, callback) => {
+    socket.on("startGame", (body, callback) => {
+      const mode = body.mode;
+      const time = body.time;
       const user = getUser(socket.id);
       if (!user || !user.isHost) {
         callback({
@@ -117,6 +119,7 @@ io.on(
           selection,
           target,
           solutions,
+          time
         });
         log.info(`${user.username} started a game.`);
       } else if (mode === "letters") {
@@ -127,6 +130,7 @@ io.on(
           mode,
           selection: [...selection],
           solutions,
+          time
         });
         log.info(`${user.username} started a game.`);
       }

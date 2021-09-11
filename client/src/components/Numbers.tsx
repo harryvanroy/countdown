@@ -14,12 +14,12 @@ const useStyles = makeStyles({
 });
 
 export const Numbers = () => {
-  const [answer, setAnswer] = useState("");
-  const [currentTotal, setTotal] = useState(0);
-  const [seconds, setSeconds] = useState(60);
-
   const classes = useStyles();
   const game = useGame();
+  const [answer, setAnswer] = useState("");
+  const [currentTotal, setTotal] = useState(0);
+  const [seconds, setSeconds] = useState(game?.state.time === undefined ? 30 : parseInt(game.state.time));
+
 
   const handleCheckAnswer = () => {
     const answerSafe = answer.replace(/[^-()\d/*+.]/g, "");

@@ -9,5 +9,6 @@ export function sampleLetters(vowels: number, cons: number): string {
     for (let i = 0; i < vowels; i++) {
         result += "aeiou".charAt(Math.floor(Math.random() * 5));
     }
-    return result;
+
+    return result.split('').sort(function () { return 0.5 - Math.random() }).join('');
 }

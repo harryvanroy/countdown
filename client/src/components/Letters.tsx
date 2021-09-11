@@ -5,8 +5,7 @@ import { useGame } from "../context/game";
 
 const useStyles = makeStyles({
     root: {
-        backgroundColor: "rgb(43, 86, 163)",
-        height: "100vh",
+        backgroundColor: "rgb(43, 86, 163)"
     },
     workingOut: {
         width: 500,
@@ -14,20 +13,18 @@ const useStyles = makeStyles({
 });
 
 export const Letters = () => {
-    const [answer, setAnswer] = useState("");
-    const [currentScore, setScore] = useState(0);
-    const [seconds, setSeconds] = useState(10);
-
     const classes = useStyles();
     const game = useGame();
+    const [answer, setAnswer] = useState("");
+    const [currentScore, setScore] = useState(0);
+    const [seconds, setSeconds] = useState(game?.state.time === undefined ? 30 : parseInt(game.state.time));
 
     const handleCheckAnswer = () => {
-        let answerSafe = true;
+        let answerSafe = false;
         if (game?.state.solutions != null || game?.state.solutions != undefined) {
-            answerSafe = game?.state.solutions.includes(answer);
+            answerSafe = game?.state.solutions.includes(answer.toLowerCase()) && /[^a-zA-Z]/.test(answer);
         }
-        console.log(answerSafe);
-        setScore(answer.length);
+        setScore((answerSafe) ? answer.length : 0);
     };
 
     const handleAnswerChange = (event: any) => {
