@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, TextField, Paper, Button } from "@material-ui/core";
 import { useGame } from "../context/game";
@@ -16,6 +16,8 @@ const useStyles = makeStyles({
 export const Numbers = () => {
   const [answer, setAnswer] = useState("");
   const [currentTotal, setTotal] = useState(0);
+  const [seconds, setSeconds] = useState(60);
+
   const classes = useStyles();
   const game = useGame();
 
@@ -29,6 +31,14 @@ export const Numbers = () => {
     setAnswer(event.target.value);
     console.log(event.target.value);
   };
+
+  useEffect(() => {
+    if (seconds > 0) {
+      setTimeout(() => setSeconds(seconds - 1), 1000);
+    } else {
+      alert("time done");
+    }
+  });
 
   return (
     <Box className={classes.root}>
@@ -47,6 +57,8 @@ export const Numbers = () => {
         <p>Selection: {game?.state.selection?.join()}</p>
         <p>Target: {game?.state.targetNum}</p>
         <p>Current value: {currentTotal}</p>
+        <p>Seconds left: {seconds} </p>
+        <Box></Box>
       </Paper>
     </Box>
   );
