@@ -58,7 +58,7 @@ const Home = () => {
       transports: ["websocket", "polling", "flashsocket"],
     });
     game?.updateState({ socket });
-  }, []);
+  }, [game]);
 
   const onCreateRoom = (_: any) => {
     if (username === "") {
@@ -90,9 +90,8 @@ const Home = () => {
       if (error) {
         setError(error);
       } else {
-        const { username, roomID, isHost } = user;
         game?.updateState({
-          roomId: roomID,
+          roomId: user.roomID,
         });
       }
     });

@@ -1,6 +1,4 @@
-import React from 'react'
-import { useGame } from '../context/game'
-
+import React from "react";
 
 const Sidebar = () => {
   return (
@@ -8,7 +6,7 @@ const Sidebar = () => {
       <li>Hello 1</li>
       <li>Hello 2</li>
     </>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

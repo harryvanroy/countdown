@@ -7,7 +7,6 @@ type State = {
   username: string | null;
   socket: Socket<ClientListenEvents, ClientEmitEvents> | null;
   isHost: boolean;
-  username: string | null;
   gameStarted: boolean;
   gameMode: "letters" | "numbers" | "podium" | null;
   solutions: string[] | null;
@@ -19,7 +18,6 @@ const defaultState: State = {
   roomId: null,
   username: null,
   socket: null,
-  username: null,
   isHost: false,
   gameStarted: false,
   gameMode: null,

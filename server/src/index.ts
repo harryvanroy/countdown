@@ -42,9 +42,9 @@ io.on(
 
       io.to(user.roomID).emit("chatMessage", {
         username: user.username,
-        message
+        message,
       });
-    })
+    });
 
     socket.on("createRoom", ({ username }, callback) => {
       const room = generateRoomID();
