@@ -1,14 +1,14 @@
 import React from 'react';
 import { useGame } from '../context/game';
-import { makeNewRoom } from '../api'
+import { createRoom } from '../api'
 
 const Home = () => {
   const game = useGame();
 
   const onCreateRoom = (_: any) => {
     try {
-      const roomId = makeNewRoom();
-      game?.setRoomId(roomId);
+      const roomId = createRoom();
+      game?.updateState({roomId});
     } catch (e: any) {
       // TODO
       alert(e?.message)

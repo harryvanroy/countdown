@@ -1,23 +1,25 @@
 import React, { useContext, createContext, useState } from 'react';
+import { Socket } from 'socket.io-client'
 
 type State = {
   roomId: string | null,
+  socket: Socket | null,
+  isHost: boolean,
   gameStarted: boolean,
   gameMode: 'letters' | 'numbers' | 'podium' | null
 };
 
 const defaultState: State = {
   roomId: null,
+  socket: null,
+  isHost: false,
   gameStarted: false,
   gameMode: null,
 }
 
 type GameContextValue = {
   state: State,
-  updateState: (newState: Partial<State>) => void,
-  setRoomId: (roomId: State["roomId"]) => void,
-  setGameStarted: (gameStarted: State["gameStarted"]) => void,
-  setGameMode: (gameMode: State['gameMode']) => void
+  updateState: (newState: Partial<State>) => void
 } | null;
 
 export const gameContext = createContext<GameContextValue>(null);
@@ -29,20 +31,13 @@ type GameContextProviderProps = {
 export const GameContextProvider = (props: GameContextProviderProps) => {
   const [state, setState] = useState<State>(defaultState);
 
+  const updateState = (newState: Partial<State>) => {
+    setState({...state, ...newState})
+  }
+
   const value = {
     state,
-    updateState: (newState: Partial<State>) => {
-      setState({...state, ...newState});
-    },
-    setRoomId: (roomId: State["roomId"]) => {
-      setState({...state, roomId});
-    },
-    setGameStarted: (gameStarted: State["gameStarted"]) => {
-      setState({...state, gameStarted});
-    },
-    setGameMode: (gameMode: State["gameMode"]) => {
-      setState({...state, gameMode});
-    }
+    updateState  
   };
 
   return <gameContext.Provider value={value}>{props.children}</gameContext.Provider>;
