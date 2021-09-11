@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useGame } from "../context/game";
-import io from "socket.io-client";
 import {
   Box,
   Typography,
@@ -53,13 +52,6 @@ const Home = () => {
 
   const classes = useStyles();
 
-  useEffect(() => {
-    const socket = io(`http://localhost:8080`, {
-      transports: ["websocket", "polling", "flashsocket"],
-    });
-    game?.updateState({ socket });
-  }, []);
-
   const onCreateRoom = (_: any) => {
     if (username === "") {
       setError("Username is not set");
@@ -74,7 +66,7 @@ const Home = () => {
         setError(error);
       } else {
         game?.updateState({
-          username,
+          username: username || "",
           roomId: user.roomID,
         });
       }
@@ -91,7 +83,8 @@ const Home = () => {
         setError(error);
       } else {
         game?.updateState({
-          roomId: user.roomID,
+          username: username || "",
+          roomId: roomId,
         });
       }
     });
