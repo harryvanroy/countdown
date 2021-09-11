@@ -23,11 +23,13 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
-  socket.on("createRoom", ({ username, callback }: any) => {
-    const room = generateroomID();
+  console.log(`${socket.id} connected`);
+  socket.on("createRoom", (data, callback) => {
+    console.log("createRoom called");
+    const room = generateRoomID();
 
-    if (username) {
-      const user = addUser(socket.id, username, room, true);
+    if (data.username) {
+      const user = addUser(socket.id, data.username, room, true);
       if (user) {
         socket.join(user.roomID);
         callback({
@@ -117,6 +119,6 @@ server.listen(port, () => {
   log.info(`Server started at http://localhost:${port}`);
 });
 
-const generateroomID = () => {
+const generateRoomID = () => {
   return crypto.randomBytes(16).toString("base64");
 };

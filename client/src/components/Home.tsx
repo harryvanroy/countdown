@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useGame } from "../context/game";
 import io, { Socket } from "socket.io-client";
-import { createRoom } from '../api'
 
 const Home = () => {
   const game = useGame();
@@ -9,10 +8,12 @@ const Home = () => {
 
   const initSocket = () => {
     if (game && !game.state.socket) {
-      const socket = io(`http://${window.location.hostname}:5000`);
-      game.updateState({socket});
+      const socket = io(`http://localhost`, {
+        transports: ["websocket", "polling", "flashsocket"],
+      });
+      game.updateState({ socket });
     }
-  }
+  };
 
   const onCreateRoom = (_: any) => {
     if (username === "") {
@@ -22,21 +23,20 @@ const Home = () => {
 
     initSocket();
     const socket = game?.state.socket;
-
-    socket?.emit("createRoom", (response: any) => {
+    socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
 
       if (error) {
         alert(error);
       } else if (!error || !user) {
-        alert("Didn't return user.")
+        alert("Didn't return user.");
       } else {
         const { username, roomID, isHost } = user;
         game?.updateState({
           roomId: roomID,
-        })
+        });
       }
-    });    
+    });
   };
 
   return (
