@@ -17,6 +17,13 @@ export type ServerSideEvents = {
         },
     callback: any
   ) => void;
+  chatMessage: (
+    data: {
+      username: string,
+      message: string
+    },
+    callback: any
+  ) => void
 };
 
 // what clients send to server
@@ -41,6 +48,10 @@ export type ClientEmitEvents = {
     },
     callback: any
   ) => void;
+  chatMessage: (
+    data: string,
+    callback: any
+  ) => void
 };
 
 // what client receives from server

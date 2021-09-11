@@ -1,9 +1,10 @@
 import React, { useContext, createContext, useState } from "react";
 import { Socket } from "socket.io-client";
-import { ClientListenEvents, ClientEmitEvents } from '../../../common/socket'
+import { ClientListenEvents, ClientEmitEvents } from "../../../common/socket";
 
 type State = {
   roomId: string | null;
+  username: string | null;
   socket: Socket<ClientListenEvents, ClientEmitEvents> | null;
   isHost: boolean;
   gameStarted: boolean;
@@ -15,6 +16,7 @@ type State = {
 
 const defaultState: State = {
   roomId: null,
+  username: null,
   socket: null,
   isHost: false,
   gameStarted: false,

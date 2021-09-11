@@ -28,8 +28,6 @@ io.attach(server);
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const roomRounds: { [roomId: string]: string[] } = {};
-
 io.on(
   "connection",
   (
@@ -39,6 +37,15 @@ io.on(
       ServerSideEvents
     >
   ) => {
+    socket.on("chatMessage", (message, callback) => {
+      const user = getUser(socket.id);
+
+      io.to(user.roomID).emit("chatMessage", {
+        username: user.username,
+        message,
+      });
+    });
+
     socket.on("createRoom", ({ username }, callback) => {
       const room = generateRoomID();
 
@@ -88,13 +95,6 @@ io.on(
         return;
       }
 
-      /*  const { letters, numbers } = rounds;
-    roomRounds[user.roomID] = [];
-    for (let i = 0; i < letters; i++) roomRounds[user.roomID].push("letters");
-    for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push("numbers");
-
-    const currGameMode = roomRounds[user.roomID].pop(); */
-
       if (mode === "numbers") {
         const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100];
         const selection = []
@@ -118,7 +118,7 @@ io.on(
 
         io.to(user.roomID).emit("startGame", {
           mode,
-          selection,
+          selection: [...selection],
           solutions,
         });
         log.info(`${user.username} started a game.`);
@@ -171,5 +171,5 @@ server.listen(port, () => {
 });
 
 const generateRoomID = () => {
-  return crypto.randomBytes(16).toString("base64");
+  return crypto.randomBytes(8).toString("hex");
 };
