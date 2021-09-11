@@ -6,16 +6,15 @@ type Props = {
   characters: string;
 };
 
-const props: Props = {
-  words: new Set(),
-  characters: "NFIOISSOD".toLowerCase(),
-};
-
 const data = fs.readFileSync("./src/util/dict.txt", "utf8").split("\n");
 
 const trie = create(data);
 
-const populateSet = (props: Props) => {
+
+export const populateSet = (props: string): Array<string> => {
+
+  const words = new Set<string>();
+
   const permuteWords = (
     wordBank: string,
     currWord: string,
@@ -36,12 +35,11 @@ const populateSet = (props: Props) => {
     }
   };
 
-  permuteWords(props.characters, "", props.words, trie);
-};
+  permuteWords(props, "", words, trie);
+  const wordList = Array.from(words);
+  wordList.sort(function (a, b) {
+    return b.length - a.length;
+  });
 
-populateSet(props);
-const wordList = Array.from(props.words);
-wordList.sort(function (a, b) {
-  return b.length - a.length;
-});
-console.log(wordList);
+  return wordList;
+};
