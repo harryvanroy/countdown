@@ -42,9 +42,9 @@ io.on(
 
       io.to(user.roomID).emit("chatMessage", {
         username: user.username,
-        message
+        message,
       });
-    })
+    });
 
     socket.on("createRoom", ({ username }, callback) => {
       const room = generateRoomID();
@@ -102,8 +102,13 @@ io.on(
       }
 
       if (mode === "numbers") {
-        const selection = [1, 2, 5, 9, 50, 100];
-        const target = 500;
+        const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100];
+        const selection = []
+        for (let i = 0; i < 6; i++) {
+          selection.push(options[Math.floor(Math.random() * options.length)])
+        }
+
+        const target = Math.floor(Math.random() * 1000);
         const solutions = generateNumbersSolutions(selection, target);
 
         io.to(user.roomID).emit("startGame", {

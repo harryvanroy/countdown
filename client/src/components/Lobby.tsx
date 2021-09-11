@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { User } from "../../../common/socket";
 import { useGame } from "../context/game";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { Box, Paper, Button, Typography } from "@material-ui/core";
@@ -113,30 +112,24 @@ const Lobby = () => {
         <Typography variant="caption">
           Send the RoomID to your friends so they can join the lobby.
         </Typography>
+        <FormControl className={classes.formControl}>
+          <InputLabel>Game type</InputLabel>
+          <Select
+            open={open}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            value={gameType}
+            onChange={handleChange}>
+            <MenuItem value="numbers">Numbers</MenuItem>
+            <MenuItem value="letters">Letters</MenuItem>
+          </Select>
+        </FormControl>
         <Typography variant="h6">Current players:</Typography>
         <ul>
           {game?.state?.roomUsers.map((user, index) => (
             <li key={index}>{user}</li>
           ))}
         </ul>
-        <div>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="demo-controlled-open-select-label">
-              Numbers
-            </InputLabel>
-            <Select
-              labelId="demo-controlled-open-select-label"
-              id="demo-controlled-open-select"
-              open={open}
-              onClose={handleClose}
-              onOpen={handleOpen}
-              value={gameType}
-              onChange={handleChange}>
-              <MenuItem value="numbers">Numbers</MenuItem>
-              <MenuItem value="letters">Letters</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
         <Button variant="contained" onClick={onStartGame} fullWidth>
           Start game
         </Button>

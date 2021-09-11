@@ -82,10 +82,9 @@ const Home = () => {
       if (error) {
         setError(error);
       } else {
-        const { username, roomID, isHost } = user;
         game?.updateState({
           username: username || "",
-          roomId: roomID,
+          roomId: roomId,
         });
       }
     });

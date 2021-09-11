@@ -1,5 +1,3 @@
-const numbers = [75, 100, 25, 50, 9, 2];
-
 function removeItemOnce(arr: number[], items: number[]) {
   arr = arr.map((x) => x);
   for (const item of items) {
@@ -25,7 +23,7 @@ const OPS: Record<string, (n1: number, n2: number) => number> = {
     return n1 / n2;
   },
 };
-export const generateNumbersSolutions = (num: Array<number>, target: number): Array<string> => {
+export const generateNumbersSolutions = (numbers: Array<number>, target: number): Array<string> => {
   const permute_numbers = (
     numbers: number[],
     valSums: number,
