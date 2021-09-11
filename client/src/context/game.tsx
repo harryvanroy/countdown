@@ -7,6 +7,9 @@ type State = {
   isHost: boolean;
   gameStarted: boolean;
   gameMode: "letters" | "numbers" | "podium" | null;
+  solutions: string[] | null;
+  selection: number[] | string[] | null;
+  targetNum: number | null;
 };
 
 const defaultState: State = {
@@ -15,6 +18,9 @@ const defaultState: State = {
   isHost: false,
   gameStarted: false,
   gameMode: null,
+  solutions: null,
+  selection: null,
+  targetNum: null,
 };
 
 type GameContextValue = {

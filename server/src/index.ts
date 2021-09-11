@@ -22,9 +22,7 @@ io.attach(server);
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-const roomRounds: { [roomId: string]: string[] } = {
-
-}
+const roomRounds: { [roomId: string]: string[] } = {};
 
 io.on("connection", (socket: socketio.Socket) => {
   socket.on("createRoom", ({ username }, callback) => {
@@ -69,26 +67,36 @@ io.on("connection", (socket: socketio.Socket) => {
     });
   });
 
-  socket.on("startGame", ({ rounds }, callback) => {
+  socket.on("startGame", ({ mode }, callback) => {
     const user = getUser(socket.id);
     if (!user || !user.isHost) {
       callback({
-        error: "Invalid user: can't start game."
-      })
-      return
+        error: "Invalid user: can't start game.",
+      });
+      return;
     }
 
-    const { letters, numbers } = rounds;
+    /*  const { letters, numbers } = rounds;
     roomRounds[user.roomID] = [];
-    for (let i = 0; i < letters; i++) roomRounds[user.roomID].push('letters');
-    for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push('numbers');
+    for (let i = 0; i < letters; i++) roomRounds[user.roomID].push("letters");
+    for (let i = 0; i < numbers; i++) roomRounds[user.roomID].push("numbers");
 
-    const currGameMode = roomRounds[user.roomID].pop();
+    const currGameMode = roomRounds[user.roomID].pop(); */
 
-    // TODO
-    io.to(user.roomID).emit("startGame", { gameMode: currGameMode });
-    log.info(`${user.username} started a game.`);
-  })
+    if (mode === "numbers") {
+      const selection = [1, 2, 5, 9, 50, 100];
+      const target = 500;
+      const solutions = generateNumbersSolutions(selection, target);
+
+      io.to(user.roomID).emit("startGame", {
+        mode,
+        selection,
+        target,
+        solutions,
+      });
+      log.info(`${user.username} started a game.`);
+    }
+  });
 
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
@@ -121,7 +129,7 @@ app.get(
   "/numbersolutionrequest/:nums/:target",
   (req: Request, res: Response) => {
     if (req.params.nums == undefined || req.params.target == undefined) {
-      res.status(400).send("Fuck you bastard");
+      res.status(400).send("Bad request");
     }
     const nums = req.params.nums.split(",").map((a) => parseInt(a));
     const target = parseInt(req.params.target);

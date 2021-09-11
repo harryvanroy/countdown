@@ -1,6 +1,6 @@
 import React from "react";
 import { useGame } from "../context/game";
-import Numbers, { SimpleCard } from "./Numbers";
+import { Numbers } from "./Numbers";
 import Podium from "./Podium";
 
 const GameRoom = () => {
@@ -11,12 +11,7 @@ const GameRoom = () => {
     case "letters":
       return <h1>Letters</h1>;
     case "numbers":
-      return (
-        <>
-          <Numbers />
-          <SimpleCard />
-        </>
-      );
+      return <Numbers />;
     case "podium":
       return <Podium />;
   }
