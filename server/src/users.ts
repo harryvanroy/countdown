@@ -1,44 +1,61 @@
 interface User {
-  id: string;
   username: string;
-  room: string;
+  roomID: string;
   isHost: boolean;
 }
 
-export const users: User[] = [];
+interface Room {
+  status: "letters" | "numbers";
+  selections: string[] | number[];
+  solutions: string[];
+}
+
+export const rooms: Record<string, Room> = {};
+export const users: Record<string, User> = {};
 
 export const addUser = (
   id: string,
   username: string,
-  room: string,
+  roomID: string,
   isHost: boolean
 ): User | undefined => {
   username = username.trim().toLowerCase();
-  room = room.trim().toLowerCase();
+  roomID = roomID.trim().toLowerCase();
 
-  const existingUser = users.find(
-    (user) => user.room === room && user.username === username
-  );
+  let existingUser = false;
+  for (const userID in users) {
+    if (
+      users[userID].roomID === roomID &&
+      users[userID].username === username
+    ) {
+      existingUser = true;
+    }
+  }
   if (existingUser) {
     return;
   }
 
-  const user = { id, username, room, isHost };
-  users.push(user);
+  const user = { username, roomID, isHost };
+  users[id] = user;
 
   return user;
 };
 
-export const removeUser = (id: string): User | undefined => {
-  const index = users.findIndex((user) => user.id === id);
+export const removeUser = (id: string): User => {
+  const user = users[id];
 
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
+  delete users[id];
+  return user;
 };
 
-export const getUser = (id: string): User | undefined =>
-  users.find((user) => user.id === id);
+export const getUser = (id: string): User => users[id];
 
-export const getUsersInRoom = (room: string): User[] =>
-  users.filter((user) => user.room === room);
+export const getUsersInRoom = (roomId: string): User[] => {
+  const usersInRoom: User[] = [];
+  for (const userID in users) {
+    if (users[userID].roomID === roomId) {
+      usersInRoom.push(users[userID]);
+    }
+  }
+  return usersInRoom;
+};

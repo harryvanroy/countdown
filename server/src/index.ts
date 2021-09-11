@@ -23,9 +23,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
-  console.log("connected");
   socket.on("createRoom", ({ username }: { username: string }) => {
-    const room = generateRoomId();
+    const room = generateroomID();
 
     let user;
     if (username) {
@@ -36,7 +35,12 @@ io.on("connection", (socket: socketio.Socket) => {
     if (!user) {
       return;
     }
-    socket.join(user.room);
+    socket.join(user.roomID);
+    io.to(user.roomID).emit(
+      "message",
+      `${user.username} created room ${user.roomID}`
+    );
+    log.info(`${user.username} created room ${user.roomID}`);
   });
   socket.on(
     "joinRoom",
@@ -47,13 +51,16 @@ io.on("connection", (socket: socketio.Socket) => {
         return;
       }
 
-      socket.join(user.room);
-      socket.emit("message", `${user.id} joined room ${user.room}`);
-      log.info(`${user.id} joined room ${user.room}`);
+      socket.join(user.roomID);
+      io.to(user.roomID).emit(
+        "message",
+        `${user.username} joined room ${user.roomID}`
+      );
+      log.info(`${user.username} joined room ${user.roomID}`);
 
-      io.to(user.room).emit("roomUsers", {
-        room: user.room,
-        users: getUsersInRoom(user.room),
+      io.to(user.roomID).emit("roomUsers", {
+        room: user.roomID,
+        users: getUsersInRoom(user.roomID),
       });
     }
   );
@@ -61,7 +68,7 @@ io.on("connection", (socket: socketio.Socket) => {
   socket.on("chatMessage", ({ msg }: { msg: string }) => {
     const user = getUser(socket.id);
     if (user) {
-      io.to(user.room).emit("message", `${user.username}: ${msg}`);
+      io.to(user.roomID).emit("message", `${user.username}: ${msg}`);
       log.info(`${user.username}: ${msg}`);
     }
   });
@@ -72,11 +79,11 @@ io.on("connection", (socket: socketio.Socket) => {
       return;
     }
 
-    io.to(user.room).emit("message", `${user.username} has left the chat`);
+    io.to(user.roomID).emit("message", `${user.username} has left the chat`);
     log.info(`${user.username} has left the chat`);
-    io.to(user.room).emit("roomUsers", {
-      room: user.room,
-      users: getUsersInRoom(user.room),
+    io.to(user.roomID).emit("roomUsers", {
+      room: user.roomID,
+      users: getUsersInRoom(user.roomID),
     });
   });
 });
@@ -111,6 +118,6 @@ server.listen(port, () => {
   log.info(`Server started at http://localhost:${port}`);
 });
 
-const generateRoomId = () => {
+const generateroomID = () => {
   return crypto.randomBytes(16).toString("base64");
 };
