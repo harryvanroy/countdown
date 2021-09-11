@@ -2,6 +2,7 @@ import React from "react";
 import { useGame } from "../context/game";
 import Numbers, { SimpleCard } from "./Numbers";
 import Podium from "./Podium";
+import io from "socket.io-client";
 
 const GameRoom = () => {
   const game = useGame();

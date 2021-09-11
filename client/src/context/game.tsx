@@ -1,30 +1,30 @@
-import React, { useContext, createContext, useState } from 'react';
+import React, { useContext, createContext, useState } from "react";
 
 type State = {
-  roomId: string | null,
-  gameStarted: boolean,
-  gameMode: 'letters' | 'numbers' | 'podium' | null
+  roomId: string | null;
+  gameStarted: boolean;
+  gameMode: "letters" | "numbers" | "podium" | null;
 };
 
 const defaultState: State = {
   roomId: null,
   gameStarted: false,
   gameMode: null,
-}
+};
 
 type GameContextValue = {
-  state: State,
-  updateState: (newState: Partial<State>) => void,
-  setRoomId: (roomId: State["roomId"]) => void,
-  setGameStarted: (gameStarted: State["gameStarted"]) => void,
-  setGameMode: (gameMode: State['gameMode']) => void
+  state: State;
+  updateState: (newState: Partial<State>) => void;
+  setRoomId: (roomId: State["roomId"]) => void;
+  setGameStarted: (gameStarted: State["gameStarted"]) => void;
+  setGameMode: (gameMode: State["gameMode"]) => void;
 } | null;
 
 export const gameContext = createContext<GameContextValue>(null);
 
 type GameContextProviderProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export const GameContextProvider = (props: GameContextProviderProps) => {
   const [state, setState] = useState<State>(defaultState);
@@ -32,21 +32,23 @@ export const GameContextProvider = (props: GameContextProviderProps) => {
   const value = {
     state,
     updateState: (newState: Partial<State>) => {
-      setState({...state, ...newState});
+      setState({ ...state, ...newState });
     },
     setRoomId: (roomId: State["roomId"]) => {
-      setState({...state, roomId});
+      setState({ ...state, roomId });
     },
     setGameStarted: (gameStarted: State["gameStarted"]) => {
-      setState({...state, gameStarted});
+      setState({ ...state, gameStarted });
     },
     setGameMode: (gameMode: State["gameMode"]) => {
-      setState({...state, gameMode});
-    }
+      setState({ ...state, gameMode });
+    },
   };
 
-  return <gameContext.Provider value={value}>{props.children}</gameContext.Provider>;
-}
+  return (
+    <gameContext.Provider value={value}>{props.children}</gameContext.Provider>
+  );
+};
 
 export const useGame = () => {
   const context = useContext(gameContext);
@@ -56,4 +58,4 @@ export const useGame = () => {
   }
 
   return context;
-}
+};
