@@ -23,13 +23,13 @@ import {
   ServerListenEvents,
   ServerEmitEvents,
   ServerSideEvents,
-} from "../../common/socket";
+} from "./util/socket";
 
 const log: Logger = new Logger();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const server: http.Server = http.createServer(app);
 const io: socketio.Server = new socketio.Server();
@@ -74,7 +74,7 @@ io.on(
             solutions: null,
             selection: null,
             targetNum: null,
-            leaderboard: {}
+            leaderboard: {},
           };
           addRoom(user.roomID, room);
 
@@ -91,34 +91,50 @@ io.on(
       });
     });
 
-    socket.on("guess", (guess, _) => {
+    socket.on("guess", (guess, callback) => {
       const user = getUser(socket.id);
       const room = getRoom(user.roomID);
-      room.leaderboard[user.username] = {
-        "guess": guess,
-        "score": 0
-      }
 
       if (room.gameMode == "letters") {
-        if (guess.length <= 9 && /^[a-zA-Z]+$/.test(guess)
-          && room.solutions?.includes(guess)) {
-          room.leaderboard[user.username]["score"] = guess.length
+        if (
+          guess.length <= 9 &&
+          /^[a-zA-Z]+$/.test(guess) &&
+          room.solutions?.includes(guess)
+        ) {
+          room.leaderboard[user.username] = {
+            guess: guess,
+            score: guess.length,
+          };
         }
       } else if (room.gameMode == "numbers") {
         const answerSafe = guess.replace(/[^-()\d/*+.]/g, "");
+        console.log(answerSafe);
         // eslint-disable-next-line no-useless-escape
-        const numb = guess.match(/(\d[\d\.]*)/g)?.map(a => parseInt(a));
+        const numb = guess.match(/(\d[\d\.]*)/g)?.map((a) => parseInt(a));
         const selection = room.selection as number[];
+        if (
+          answerSafe &&
+          room.targetNum &&
+          numb !== undefined &&
+          numb.every((val) => selection.includes(val))
+        ) {
+          room.leaderboard[user.username] = {
+            guess: guess,
+            score: Math.abs(eval(answerSafe) - room.targetNum),
+          };
 
-        if (answerSafe && room.targetNum && numb !== undefined
-          && numb.every(val => selection.includes(val))) {
-          room.leaderboard[user.username]["score"] = Math.max(10 - Math.abs(eval(answerSafe) - room.targetNum), 0)
+          io.to(user.roomID).emit("chatMessage", {
+            username: "server",
+            message: `${user.username}'s guess scores ${
+              room.leaderboard[user.username]["score"]
+            }`,
+          });
+        } else {
+          callback({
+            error: "Invalid expression",
+          });
         }
       }
-      io.to(user.roomID).emit("chatMessage", {
-        username: "server",
-        message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
-      });
     });
 
     socket.on("joinRoom", ({ username, room }, callback) => {
@@ -162,7 +178,10 @@ io.on(
         }
 
         const target = Math.floor(Math.random() * 1000);
-        const solutions = generateNumbersSolutions(selection, target).slice(0, 1);
+        const solutions = generateNumbersSolutions(selection, target).slice(
+          0,
+          1
+        );
         const room = getRoom(user.roomID);
         addRoom(user.roomID, {
           ...room,
@@ -178,7 +197,7 @@ io.on(
           selection,
           target,
           solutions,
-          time
+          time,
         });
 
         log.info(`${user.username} started a game.`);
@@ -199,23 +218,20 @@ io.on(
           mode,
           selection: [...selection],
           solutions,
-          time
+          time,
         });
         log.info(`${user.username} started a game.`);
       }
 
       await delay(parseInt(time) * 1000);
 
-      const leaderboard = getRoom(user.roomID).leaderboard
+      const leaderboard = getRoom(user.roomID).leaderboard;
       io.to(user.roomID).emit("startPodium", {
-        leaderboard
+        leaderboard,
       });
     });
 
     // socket.on("tickGuess", () => {
-
-
-
 
     // });
 

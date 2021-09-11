@@ -29,7 +29,7 @@ const defaultState: State = {
   selection: null,
   targetNum: null,
   time: "30",
-  leaderboard: {}
+  leaderboard: {},
 };
 
 type GameContextValue = {

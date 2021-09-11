@@ -17,8 +17,9 @@ export const Numbers = () => {
   const classes = useStyles();
   const game = useGame();
   const [answer, setAnswer] = useState("");
-  const [seconds, setSeconds] = useState(game?.state.time === undefined ? 30 : parseInt(game.state.time));
-
+  const [seconds, setSeconds] = useState(
+    game?.state.time === undefined ? 30 : parseInt(game.state.time)
+  );
 
   const handleCheckAnswer = () => {
     const socket = game?.state.socket;
@@ -42,7 +43,7 @@ export const Numbers = () => {
     socket?.on("startPodium", (data) => {
       game?.updateState({
         gameMode: "podium",
-        leaderboard: data.leaderboard
+        leaderboard: data.leaderboard,
       });
     });
   }, [game]);
