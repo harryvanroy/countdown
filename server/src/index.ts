@@ -23,13 +23,12 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 io.on("connection", (socket: socketio.Socket) => {
-  console.log(`${socket.id} connected`);
-  socket.on("createRoom", (data, callback) => {
-    console.log("createRoom called");
+  socket.on("createRoom", ({ username }, callback) => {
+    console.log({ username });
     const room = generateRoomID();
 
-    if (data.username) {
-      const user = addUser(socket.id, data.username, room, true);
+    if (username) {
+      const user = addUser(socket.id, username, room, true);
       if (user) {
         socket.join(user.roomID);
         callback({
