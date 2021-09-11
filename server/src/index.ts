@@ -43,14 +43,21 @@ io.on("connection", (socket: socketio.Socket) => {
 
   socket.on(
     "joinRoom",
-    ({ username, room }: { username: string; room: string }) => {
+    ({ username, room }, callback) => {
       const user = addUser(socket.id, username, room, false);
 
       if (!user) {
+        callback({
+          error: "Couldn't join room."
+        })
         return;
       }
 
       socket.join(user.roomID);
+      callback({
+        user
+      })
+
       io.to(user.roomID).emit(
         "message",
         `${user.username} joined room ${user.roomID}`
