@@ -8,10 +8,13 @@ const Home = () => {
 
   const initSocket = () => {
     if (game && !game.state.socket) {
-      const socket = io(`http://localhost`, {
+      const socket = io(`http://localhost:5000`, {
         transports: ["websocket", "polling", "flashsocket"],
       });
       game.updateState({ socket });
+      return socket;
+    } else {
+      return game?.state.socket;
     }
   };
 
@@ -21,8 +24,9 @@ const Home = () => {
       return;
     }
 
-    initSocket();
-    const socket = game?.state.socket;
+    const socket = initSocket();
+
+    console.log({socket})
     socket?.emit("createRoom", { username }, (response: any) => {
       const { error, user } = response || {};
       console.log(response)
