@@ -17,7 +17,7 @@ const Alert = (props: JSX.IntrinsicAttributes & AlertProps) => {
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "rgb(43, 86, 163)",
+    backgroundColor: "rgb(3,22,168, 0.75)",
     height: "100vh",
   },
   username: {
