@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, TextField, Paper, Button } from "@material-ui/core";
 import { useGame } from "../context/game";
+import { isEnterKey } from "../util";
 
 const useStyles = makeStyles({
     root: {
@@ -45,13 +46,21 @@ export const Letters = () => {
 
             if (error) {
                 alert(error);
-            }
+            } 
         });
+
+        setAnswer("")
     };
 
     const handleAnswerChange = (event: any) => {
         setAnswer(event.target.value);
     };
+
+    const handleKeyDown = (event: any) => {
+        if (isEnterKey(event)) {
+            handleCheckAnswer()
+        }
+    }
 
     useEffect(() => {
         const socket = game?.state.socket;
@@ -84,10 +93,8 @@ export const Letters = () => {
                     value={answer}
                     variant="outlined"
                     onChange={handleAnswerChange}
+                    onKeyDown={handleKeyDown}
                 />
-                <Button variant="contained" onClick={handleCheckAnswer}>
-                    Check answer
-                </Button>
                 <p>Mode: {game?.state.gameMode}</p>
                 <p>Selection: {game?.state.selection} </p>
                 <p>Points Scored: {currentScore} </p>

@@ -107,19 +107,20 @@ io.on(
           /^[a-zA-Z]+$/.test(guess) &&
           room.solutions?.includes(guess)
         ) {
-          let prevGuessLength = (room as any)?.leaderboard[user.username]?.guess?.length;
-          if (!prevGuessLength && prevGuessLength !== 0) {
-            prevGuessLength = Infinity;
+          let prevDelta = room.leaderboard[user.username]?.delta;
+
+          if (!prevDelta && prevDelta !== 0) {
+            prevDelta = Infinity;
           }
 
+          const currDelta = 9 - Math.min(guess.length, 9);
 
-          console.log({newLength: guess.length, prevGuessLength})
-
-          if (guess.length < prevGuessLength) return;
+          if (currDelta > prevDelta) return;
 
           room.leaderboard[user.username] = {
             guess: guess,
             score: guess.length,
+            delta: currDelta
           };
         }
       } else if (room.gameMode == "numbers") {
@@ -133,42 +134,44 @@ io.on(
           numb !== undefined &&
           numb.every((val) => selection.includes(val))
         ) {
-          const newScore = Math.abs(eval(answerSafe) - room.targetNum)
-          let oldScore = room.leaderboard[user.username]?.score
-          if (!oldScore && oldScore !== 0) {
-            oldScore = -Infinity;
+          let prevDelta = room.leaderboard[user.username]?.delta;
+
+          if (!prevDelta && prevDelta !== 0) {
+            prevDelta = Infinity;
           }
 
-          console.log({newScore, oldScore})
+          const currDelta = Math.abs(eval(answerSafe) - room.targetNum);
 
-          if (newScore <= oldScore) {
+          if (currDelta > prevDelta) {
             return;
           }
 
           room.leaderboard[user.username] = {
             guess: guess,
-            score: newScore,
+            score: -1, // TODO
+            delta: currDelta
           };
 
-          io.to(user.roomID).emit("chatMessage", {
-            username: "server",
-            message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]
-              }`,
-          });
+          // io.to(user.roomID).emit("chatMessage", {
+          //   username: "server",
+          //   message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]
+          //     }`,
+          // });
         } else {
           callback({
             error: "Invalid expression",
           });
         }
       }
-      io.to(user.roomID).emit("chatMessage", {
-        username: "server",
-        message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
-      });
+      // io.to(user.roomID).emit("chatMessage", {
+      //   username: "server",
+      //   message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
+      // });
 
       io.to(user.roomID).emit("userBestGuess", {
         username: user.username,
-        guessLength: room.leaderboard[user.username]["score"]
+        delta: room.leaderboard[user.username]?.delta,
+        score: room.leaderboard[user.username]?.score
       })
     });
 

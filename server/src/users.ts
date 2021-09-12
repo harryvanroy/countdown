@@ -10,7 +10,14 @@ interface Room {
   solutions: string[] | null;
   selection: number[] | string | null;
   targetNum: number | null;
-  leaderboard: Record<string, Record<string, number | string>>
+  // leaderboard: Record<string, Record<string, number | string>>
+  leaderboard: {
+    [username: string]: {
+      score?: number,
+      guess?: string | number,
+      delta?: number
+    }
+  }
   totalScores: Record<string, number>
 }
 
