@@ -44,6 +44,7 @@ export const Numbers = () => {
       game?.updateState({
         gameMode: "podium",
         leaderboard: data.leaderboard,
+        totalScores: data.totalScores
       });
     });
   }, [game]);

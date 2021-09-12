@@ -5,18 +5,18 @@ export type ServerSideEvents = {
   startGame: (
     data:
       | {
-          mode: "letters";
-          selection: string[];
-          solutions: string[];
-          time: string;
-        }
+        mode: "letters";
+        selection: string[];
+        solutions: string[];
+        time: string;
+      }
       | {
-          mode: "numbers";
-          selection: number[];
-          target: number;
-          solutions: string[];
-          time: string;
-        },
+        mode: "numbers";
+        selection: number[];
+        target: number;
+        solutions: string[];
+        time: string;
+      },
     callback: any
   ) => void;
   chatMessage: (
@@ -29,6 +29,7 @@ export type ServerSideEvents = {
   startPodium: (
     data: {
       leaderboard: Record<string, Record<string, number>>;
+      totalScores: Record<string, number>;
     },
     callback: any
   ) => void;

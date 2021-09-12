@@ -11,6 +11,7 @@ interface Room {
   selection: number[] | string | null;
   targetNum: number | null;
   leaderboard: Record<string, Record<string, number | string>>
+  totalScores: Record<string, number>
 }
 
 export const rooms: Record<string, Room> = {};
@@ -65,6 +66,9 @@ export const getUsersInRoom = (roomId: string): User[] => {
 
 export const addRoom = (id: string, room: Room): void => {
   rooms[id] = room;
+  for (const a of getUsersInRoom(id)) {
+    room.totalScores[a.username] = 0
+  }
 };
 
 export const getRoom = (id: string): Room => {
