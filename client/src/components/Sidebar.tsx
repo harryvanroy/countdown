@@ -28,13 +28,22 @@ const Leaderboard = () => {
   }, [game?.state.roomUsers]);
 
   socket?.on("userBestGuess", (data, callback) => {
-    console.log(data)
+    console.log(data);
     setProgress({ ...progress, [data.username]: data.delta });
     console.log(progress);
   });
 
+  const capitalizeFirstLetter = (word: string) => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  };
+
   return (
     <Grid style={{ width: "100%", padding: "20px" }}>
+      {game?.state.gameMode ? (
+        <Typography variant="h4">
+          {capitalizeFirstLetter(game?.state.gameMode)}
+        </Typography>
+      ) : null}
       {Object.entries(progress).map(([user, delta]) => {
         const currGuess = maxScore - delta;
         const currGuessNorm = Math.min((currGuess / maxScore) * 100, 100);
