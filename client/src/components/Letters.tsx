@@ -115,7 +115,12 @@ export const Letters = () => {
       justifyContent="center"
       flexDirection="column"
       alignItems="center">
-      <Box display="inline-box" className={classes.selectionsBox}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexWrap="wrap"
+        className={classes.selectionsBox}>
         {game?.state.selection?.map((value, index) => (
           <Box
             width="100px"
