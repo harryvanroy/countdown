@@ -11,12 +11,15 @@ const Leaderboard = () => {
   const game = useGame();
   const socket = game?.state.socket;
 
+  const maxScore =
+    game?.state.gameMode === "letters" ? 9 : game?.state.targetNum || 0;
+
   const [progress, setProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
     game?.state.roomUsers.forEach((user) => {
       if (!(user in progress)) {
-        setProgress({ ...progress, [user]: 0 });
+        setProgress({ ...progress, [user]: maxScore });
       }
     });
     return () => {
@@ -25,15 +28,14 @@ const Leaderboard = () => {
   }, [game?.state.roomUsers]);
 
   socket?.on("userBestGuess", (data, callback) => {
-    setProgress({ ...progress, [data.username]: data.guessLength });
+    console.log(data);
+    setProgress({ ...progress, [data.username]: data.delta });
     console.log(progress);
   });
 
   const capitalizeFirstLetter = (word: string) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   };
-  const maxScore =
-    game?.state.gameMode === "letters" ? 9 : game?.state.targetNum || 0;
 
   return (
     <Grid style={{ width: "100%", padding: "20px" }}>
@@ -42,14 +44,15 @@ const Leaderboard = () => {
           {capitalizeFirstLetter(game?.state.gameMode)}
         </Typography>
       ) : null}
-      {Object.entries(progress).map(([user, amount]) => {
-        amount = (amount / maxScore) * 100; // normalise between 0-100
-        amount = Math.abs(amount);
+      {Object.entries(progress).map(([user, delta]) => {
+        const currGuess = maxScore - delta;
+        const currGuessNorm = Math.min((currGuess / maxScore) * 100, 100);
+
         return (
           <>
             <Grid item xs={1}>
               <Typography variant="caption">{user}</Typography>
-              <LinearProgress variant="determinate" value={amount} />
+              <LinearProgress variant="determinate" value={currGuessNorm} />
             </Grid>
           </>
         );
