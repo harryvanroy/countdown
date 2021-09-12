@@ -75,6 +75,7 @@ io.on(
             selection: null,
             targetNum: null,
             leaderboard: {},
+            totalScores: {}
           };
           addRoom(user.roomID, room);
 
@@ -123,7 +124,6 @@ io.on(
         }
       } else if (room.gameMode == "numbers") {
         const answerSafe = guess.replace(/[^-()\d/*+.]/g, "");
-        console.log(answerSafe);
         // eslint-disable-next-line no-useless-escape
         const numb = guess.match(/(\d[\d\.]*)/g)?.map((a) => parseInt(a));
         const selection = room.selection as number[];
@@ -152,9 +152,8 @@ io.on(
 
           io.to(user.roomID).emit("chatMessage", {
             username: "server",
-            message: `${user.username}'s guess scores ${
-              room.leaderboard[user.username]["score"]
-            }`,
+            message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]
+              }`,
           });
         } else {
           callback({
@@ -261,9 +260,16 @@ io.on(
 
       await delay(parseInt(time) * 1000);
 
-      const leaderboard = getRoom(user.roomID).leaderboard;
+      const room = getRoom(user.roomID);
+      const totalScores = room.totalScores;
+      const leaderboard = room.leaderboard
+      for (const a in leaderboard) {
+        totalScores[a] += leaderboard[a]["score"] as number
+      }
+
       io.to(user.roomID).emit("startPodium", {
         leaderboard,
+        totalScores
       });
     });
 
