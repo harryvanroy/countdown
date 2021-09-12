@@ -15,6 +15,7 @@ type State = {
   targetNum: number | null;
   time: string;
   leaderboard: Record<string, Record<string, number | string>>;
+  totalScores: Record<string, number>
 };
 
 const defaultState: State = {
@@ -30,6 +31,7 @@ const defaultState: State = {
   targetNum: null,
   time: "30",
   leaderboard: {},
+  totalScores: {},
 };
 
 type GameContextValue = {

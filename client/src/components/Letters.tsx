@@ -47,7 +47,8 @@ export const Letters = () => {
         socket?.on("startPodium", (data) => {
             game?.updateState({
                 gameMode: "podium",
-                leaderboard: data.leaderboard
+                leaderboard: data.leaderboard,
+                totalScores: data.totalScores
             });
         });
     }, [game]);
