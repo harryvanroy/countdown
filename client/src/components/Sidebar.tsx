@@ -49,12 +49,12 @@ const Leaderboard = () => {
         const currGuessNorm = Math.min((currGuess / maxScore) * 100, 100);
 
         return (
-          <>
+          <Box key={user}>
             <Grid item xs={12}>
               <Typography variant="caption">{user}</Typography>
               <LinearProgress variant="determinate" value={currGuessNorm} />
             </Grid>
-          </>
+          </Box>
         );
       })}
     </Grid>
