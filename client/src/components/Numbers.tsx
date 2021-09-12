@@ -17,9 +17,19 @@ export const Numbers = () => {
   const classes = useStyles();
   const game = useGame();
   const [answer, setAnswer] = useState("");
-  const [seconds, setSeconds] = useState(
-    game?.state.time === undefined ? 30 : parseInt(game.state.time)
-  );
+  const gameTime = game?.state.time === undefined ? 30 : parseInt(game.state.time)
+  const [seconds, setSeconds] = useState(gameTime);
+  //inside your component function.
+  const [audio] = useState(new Audio("./static/countdown.mp3"));
+  if (gameTime < 30 && audio.currentTime == 0) {
+    audio.currentTime = gameTime
+  }
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  console.log(audio.currentTime)
+  useEffect(() => {
+    isPlaying ? audio.play() : audio.pause();
+  }, [isPlaying]);
 
   const handleCheckAnswer = () => {
     const socket = game?.state.socket;
@@ -51,7 +61,10 @@ export const Numbers = () => {
 
   useEffect(() => {
     if (seconds > 0) {
+      setIsPlaying((seconds - gameTime) < 30)
       setTimeout(() => setSeconds(seconds - 1), 1000);
+    } else {
+      setIsPlaying(false)
     }
   });
 
