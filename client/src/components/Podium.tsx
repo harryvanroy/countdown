@@ -1,6 +1,6 @@
 import React from "react";
 import { useGame } from "../context/game";
-import { Box, Button, Typography, Paper } from "@material-ui/core";
+import { Box, Button, Typography, Paper, List, ListItem, ListItemText, Badge, Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
@@ -107,7 +107,20 @@ const Podium = () => {
           <ol>{elemsTotal}</ol>
         </Box>
         <Typography variant="h4"> Top Solutions:</Typography>
-        <Typography>{game?.state.solutions?.slice(0, 6).join(" ")}</Typography>
+        {
+          game?.state?.solutions ?
+            <List dense disablePadding>
+              {game?.state.solutions?.slice(0, Math.min(6, game?.state?.solutions.length)).map((solution) => (
+                <ListItem>
+                  <ListItemText primary={solution} />
+                </ListItem>
+              ))}
+            </List> :
+            <p>N/A</p>
+        }
+
+        {/* <Typography>{game?.state.solutions?.slice(0, 6).join(" ")}</Typography> */}
+        <Divider/>
         <Button variant="contained" onClick={onJoinRoom}>
           Return to Lobby
         </Button>
