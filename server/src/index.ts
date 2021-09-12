@@ -75,7 +75,7 @@ io.on(
             selection: null,
             targetNum: null,
             leaderboard: {},
-            totalScores: {}
+            totalScores: {},
           };
           addRoom(user.roomID, room);
 
@@ -95,7 +95,7 @@ io.on(
     socket.on("guess", (guess, callback) => {
       const user = getUser(socket.id);
       if (!user) {
-        callback({error: "no user"}); 
+        callback({ error: "no user" });
         return;
       }
 
@@ -120,7 +120,7 @@ io.on(
           room.leaderboard[user.username] = {
             guess: guess,
             score: guess.length,
-            delta: currDelta
+            delta: currDelta,
           };
         }
       } else if (room.gameMode == "numbers") {
@@ -149,7 +149,7 @@ io.on(
           room.leaderboard[user.username] = {
             guess: guess,
             score: -1, // TODO
-            delta: currDelta
+            delta: currDelta,
           };
 
           // io.to(user.roomID).emit("chatMessage", {
@@ -171,8 +171,8 @@ io.on(
       io.to(user.roomID).emit("userBestGuess", {
         username: user.username,
         delta: room.leaderboard[user.username]?.delta,
-        score: room.leaderboard[user.username]?.score
-      })
+        score: room.leaderboard[user.username]?.score,
+      });
     });
 
     socket.on("joinRoom", ({ username, room }, callback) => {
@@ -265,14 +265,14 @@ io.on(
 
       const room = getRoom(user.roomID);
       const totalScores = room.totalScores;
-      const leaderboard = room.leaderboard
+      const leaderboard = room.leaderboard;
       for (const a in leaderboard) {
-        totalScores[a] += leaderboard[a]["score"] as number
+        totalScores[a] += leaderboard[a]["score"] as number;
       }
 
       io.to(user.roomID).emit("startPodium", {
         leaderboard,
-        totalScores
+        totalScores,
       });
     });
 
