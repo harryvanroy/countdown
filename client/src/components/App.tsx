@@ -18,9 +18,12 @@ const ContextApp = () => {
 
 function App() {
   return (
+    <div className="App">
     <GameContextProvider>
       <ContextApp />
     </GameContextProvider>
+    </div>
+
   );
 }
 
