@@ -36,7 +36,8 @@ export type ServerSideEvents = {
   guess: (data: string, callback: any) => void;
   userBestGuess: (data: {
     username: string,
-    guessLength: number
+    delta: number,
+    score?: number
   }, callback: any) => void;
 };
 
