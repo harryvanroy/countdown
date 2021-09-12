@@ -56,16 +56,22 @@ export const Numbers = () => {
   });
 
   return (
-    <Box className={classes.root}>
+    <Box
+      className={classes.root}
+      display="flex"
+      justifyContent="center"
+      alignItems="center">
       <Paper>
         <TextField
           multiline
           rows={3}
+          fullWidth
           value={answer}
           variant="outlined"
+          placeholder="Enter your answer"
           onChange={handleAnswerChange}
         />
-        <Button variant="contained" onClick={handleCheckAnswer}>
+        <Button variant="contained" onClick={handleCheckAnswer} fullWidth>
           Check answer
         </Button>
         <p>Selection: {game?.state.selection?.join()}</p>

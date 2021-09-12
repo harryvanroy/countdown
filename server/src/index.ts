@@ -94,6 +94,11 @@ io.on(
 
     socket.on("guess", (guess, callback) => {
       const user = getUser(socket.id);
+      if (!user) {
+        callback({error: "no user"}); 
+        return;
+      }
+
       const room = getRoom(user.roomID);
 
       if (room.gameMode == "letters") {
@@ -102,6 +107,16 @@ io.on(
           /^[a-zA-Z]+$/.test(guess) &&
           room.solutions?.includes(guess)
         ) {
+          let prevGuessLength = (room as any)?.leaderboard[user.username]?.guess?.length;
+          if (!prevGuessLength && prevGuessLength !== 0) {
+            prevGuessLength = Infinity;
+          }
+
+
+          console.log({newLength: guess.length, prevGuessLength})
+
+          if (guess.length < prevGuessLength) return;
+
           room.leaderboard[user.username] = {
             guess: guess,
             score: guess.length,
@@ -118,9 +133,21 @@ io.on(
           numb !== undefined &&
           numb.every((val) => selection.includes(val))
         ) {
+          const newScore = Math.abs(eval(answerSafe) - room.targetNum)
+          let oldScore = room.leaderboard[user.username]?.score
+          if (!oldScore && oldScore !== 0) {
+            oldScore = -Infinity;
+          }
+
+          console.log({newScore, oldScore})
+
+          if (newScore <= oldScore) {
+            return;
+          }
+
           room.leaderboard[user.username] = {
             guess: guess,
-            score: Math.abs(eval(answerSafe) - room.targetNum),
+            score: newScore,
           };
 
           io.to(user.roomID).emit("chatMessage", {
@@ -134,10 +161,10 @@ io.on(
           });
         }
       }
-      // io.to(user.roomID).emit("chatMessage", {
-      //   username: "server",
-      //   message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
-      // });
+      io.to(user.roomID).emit("chatMessage", {
+        username: "server",
+        message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
+      });
 
       io.to(user.roomID).emit("userBestGuess", {
         username: user.username,
