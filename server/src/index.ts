@@ -119,9 +119,12 @@ io.on(
 
           if (currDelta > prevDelta) return;
 
+          // https://british-game-show.fandom.com/wiki/Countdown
+          const score = guess.length === 9 ? guess.length * 2 : guess.length;
+
           room.leaderboard[user.username] = {
             guess: guess,
-            score: guess.length,
+            score: score,
             delta: currDelta,
           };
         }
@@ -150,9 +153,16 @@ io.on(
             return;
           }
 
+          // https://british-game-show.fandom.com/wiki/Countdown
+          let score = 0;
+
+          if (currDelta === 0) score = 10;
+          else if (currDelta < 5) score = 7;
+          else if (currDelta <= 10 && currDelta >= 6) score = 5;
+
           room.leaderboard[user.username] = {
             guess: guess,
-            score: -1, // TODO
+            score: score,
             delta: currDelta,
           };
 
