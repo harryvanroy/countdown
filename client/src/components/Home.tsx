@@ -68,6 +68,7 @@ const Home = () => {
         game?.updateState({
           username: username || "",
           roomId: user.roomID,
+          isHost: true,
         });
       }
     });

@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useGame } from "../context/game";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import { Box, Paper, Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Paper,
+  Button,
+  Typography,
+  CircularProgress,
+} from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -39,12 +45,14 @@ const Lobby = () => {
   const game = useGame();
   const classes = useStyles();
 
-  const [gameType, setGameType] = React.useState<string>("numbers");
-  const [openTime, setOpenTime] = React.useState(false);
-  const [openGame, setOpenGame] = React.useState(false);
-  const [gameTime, setGameTime] = React.useState<string>("30");
+  const [gameType, setGameType] = useState<string>("numbers");
+  const [openTime, setOpenTime] = useState(false);
+  const [openGame, setOpenGame] = useState(false);
+  const [gameTime, setGameTime] = useState<string>("30");
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown; name?: string | undefined }>) => {
+  const handleChange = (
+    event: React.ChangeEvent<{ value: unknown; name?: string | undefined }>
+  ) => {
     if (event.target.name === "gametype") {
       setGameType(event.target.value as string);
     } else {
@@ -80,7 +88,7 @@ const Lobby = () => {
           gameMode: mode,
           selection: selection,
           solutions: solutions,
-          time: time
+          time: time,
         });
       } else if (data.mode === "numbers") {
         const { mode, selection, target, solutions, time } = data;
@@ -91,7 +99,7 @@ const Lobby = () => {
           selection: selection,
           targetNum: target,
           solutions: solutions,
-          time: time
+          time: time,
         });
       }
     });
@@ -100,10 +108,10 @@ const Lobby = () => {
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
     console.log(gameType);
-    console.log(gameTime)
+    console.log(gameTime);
     const body = {
       mode: gameType,
-      time: gameTime
+      time: gameTime,
     };
 
     socket?.emit("startGame", body, (response: any) => {
@@ -127,47 +135,58 @@ const Lobby = () => {
         <Typography variant="caption">
           Send the RoomID to your friends so they can join the lobby.
         </Typography>
-        <div>
-          <FormControl className={classes.formControl}>
-            <InputLabel>Game type</InputLabel>
-            <Select
-              open={openGame}
-              onClose={handleClose}
-              onOpen={handleOpen}
-              name="gametype"
-              value={gameType}
-              onChange={handleChange}>
-              <MenuItem value="numbers">Numbers</MenuItem>
-              <MenuItem value="letters">Letters</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl className={classes.formControl}>
-            <InputLabel>Time to Play</InputLabel>
-            <Select
-              open={openTime}
-              onClose={handleCloseTime}
-              onOpen={handleOpenTime}
-              name="time"
-              value={gameTime}
-              onChange={handleChange}>
-              <MenuItem value="15">15 seconds</MenuItem>
-              <MenuItem value="30">30 seconds</MenuItem>
-              <MenuItem value="45">45 seconds</MenuItem>
-              <MenuItem value="60">60 seconds</MenuItem>
-              <MenuItem value="90">90 seconds</MenuItem>
-              <MenuItem value="120">120 seconds</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
+        {game?.state.isHost ? (
+          <Box>
+            <FormControl className={classes.formControl}>
+              <InputLabel>Game type</InputLabel>
+              <Select
+                open={openGame}
+                onClose={handleClose}
+                onOpen={handleOpen}
+                name="gametype"
+                value={gameType}
+                onChange={handleChange}>
+                <MenuItem value="numbers">Numbers</MenuItem>
+                <MenuItem value="letters">Letters</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <InputLabel>Time to Play</InputLabel>
+              <Select
+                open={openTime}
+                onClose={handleCloseTime}
+                onOpen={handleOpenTime}
+                name="time"
+                value={gameTime}
+                onChange={handleChange}>
+                <MenuItem value="15">15 seconds</MenuItem>
+                <MenuItem value="30">30 seconds</MenuItem>
+                <MenuItem value="45">45 seconds</MenuItem>
+                <MenuItem value="60">60 seconds</MenuItem>
+                <MenuItem value="90">90 seconds</MenuItem>
+                <MenuItem value="120">120 seconds</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        ) : null}
         <Typography variant="h6">Current players:</Typography>
         <ul>
           {game?.state?.roomUsers.map((user, index) => (
             <li key={index}>{user}</li>
           ))}
         </ul>
-        <Button variant="contained" onClick={onStartGame} fullWidth>
-          Start game
-        </Button>
+        {game?.state.isHost ? (
+          <Button variant="contained" onClick={onStartGame} fullWidth>
+            Start game
+          </Button>
+        ) : (
+          <Box display="inline-box">
+            <CircularProgress />
+            <Typography variant="caption">
+              Waiting for host to start the game
+            </Typography>
+          </Box>
+        )}
       </Paper>
     </Box>
   );
