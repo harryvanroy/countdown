@@ -50,7 +50,6 @@ export const Letters = () => {
   }
   const [isPlaying, setIsPlaying] = useState(false);
 
-  console.log(audio.currentTime);
   useEffect(() => {
     isPlaying ? audio.play() : audio.pause();
   }, [isPlaying]);

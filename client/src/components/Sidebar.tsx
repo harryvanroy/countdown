@@ -17,20 +17,16 @@ const Leaderboard = () => {
   const [progress, setProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    console.log(game?.state.roomUsers);
     game?.state.roomUsers.forEach((user) => {
       if (!(user in progress)) {
         setProgress({ ...progress, [user]: maxScore });
       }
     });
-    return () => {
-      //
-    };
-  }, [game?.state.roomUsers]);
+  }, [game?.state.roomUsers, maxScore, progress]);
 
   socket?.on("userBestGuess", (data, callback) => {
-    console.log(data);
     setProgress({ ...progress, [data.username]: data.delta });
-    console.log(progress);
   });
 
   const capitalizeFirstLetter = (word: string) => {
