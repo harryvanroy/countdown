@@ -2,6 +2,7 @@ import React from "react";
 import { useGame } from "../context/game";
 import { Box, Button, Typography, Paper, List, ListItem, ListItemText, Badge, Divider } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import EmojiEventsIcon from "@material-ui/icons/EmojiEvents";
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,9 @@ const useStyles = makeStyles({
     margin: "10px",
     padding: "25px",
   },
+  players: {
+    marginLeft: "5px",
+  },
 });
 
 const Podium = () => {
@@ -46,7 +50,6 @@ const Podium = () => {
   let items = [];
   let elems = [];
   let itemsTotal = [];
-  let elemsTotal = [];
   if (leaderboard !== undefined && totalScores !== undefined) {
     for (const user in leaderboard) {
       items.push({
@@ -67,21 +70,6 @@ const Podium = () => {
     itemsTotal.sort((o1, o2) => {
       return o2["score"] < o1["score"] ? -1 : 1;
     });
-
-    for (const a of items) {
-      elems.push(
-        <li>
-          {a["user"] +
-            ": came up with " +
-            a["guess"] +
-            " scoring " +
-            a["score"]}
-        </li>
-      );
-    }
-    for (const a of itemsTotal) {
-      elemsTotal.push(<li>{a["user"] + ": " + a["score"] + " points"}</li>);
-    }
   }
 
   const onJoinRoom = (e: any) => {
@@ -100,11 +88,29 @@ const Podium = () => {
       <Paper className={classes.paper}>
         <Box>
           <Typography variant="h4">Round Scores</Typography>
-          <ol>{elems}</ol>
+          {items.map((item, index) => (
+            <Box display="inline-box" key="index">
+              <EmojiEventsIcon />
+              <Typography className={classes.players}>
+                {item["user"] +
+                  ": came up with " +
+                  item["guess"] +
+                  " scoring " +
+                  item["score"]}
+              </Typography>
+            </Box>
+          ))}
         </Box>
         <Box>
           <Typography variant="h4">Cumulative Scores</Typography>
-          <ol>{elemsTotal}</ol>
+          {itemsTotal.map((item, index) => (
+            <Box display="inline-box" key="index">
+              <EmojiEventsIcon />
+              <Typography className={classes.players}>
+                {item["user"] + ": " + item["score"] + " points"}
+              </Typography>
+            </Box>
+          ))}
         </Box>
         <Typography variant="h4"> Top Solutions:</Typography>
         {
