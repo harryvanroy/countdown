@@ -29,11 +29,19 @@ const Leaderboard = () => {
     console.log(progress);
   });
 
+  const capitalizeFirstLetter = (word: string) => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  };
   const maxScore =
     game?.state.gameMode === "letters" ? 9 : game?.state.targetNum || 0;
 
   return (
     <Grid style={{ width: "100%", padding: "20px" }}>
+      {game?.state.gameMode ? (
+        <Typography variant="h4">
+          {capitalizeFirstLetter(game?.state.gameMode)}
+        </Typography>
+      ) : null}
       {Object.entries(progress).map(([user, amount]) => {
         amount = (amount / maxScore) * 100; // normalise between 0-100
         amount = Math.abs(amount);

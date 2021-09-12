@@ -16,7 +16,7 @@ import Select from "@material-ui/core/Select";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: "rgb(3,22,168, 0.75)",
+      backgroundColor: "rgb(47, 74, 124)",
       height: "100vh",
     },
     username: {

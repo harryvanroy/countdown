@@ -5,7 +5,7 @@ import { useGame } from "../context/game";
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "rgb(3,22,168, 0.75)",
+    backgroundColor: "rgb(35,65,119)",
     height: "100vh",
   },
   workingOut: {
@@ -14,13 +14,13 @@ const useStyles = makeStyles({
   boxes: {
     border: "1px solid white",
     color: "white",
-    backgroundColor: "rgb(3,22,168)",
+    backgroundColor: "rgb(42, 66, 157)",
     margin: "10px 0",
   },
   targetBox: {
     border: "5px solid white",
     color: "white",
-    backgroundColor: "rgb(3,22,168)",
+    backgroundColor: "rgb(42, 66, 157)",
   },
   selectionsBox: {
     margin: "30px 0",
