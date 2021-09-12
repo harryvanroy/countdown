@@ -7,6 +7,7 @@ const useStyles = makeStyles({
   root: {
     backgroundColor: "rgb(35,65,119)",
     height: "100vh",
+    color: "white",
   },
   workingOut: {
     width: 500,
@@ -89,7 +90,12 @@ const Podium = () => {
   };
 
   return (
-    <Box>
+    <Box
+      className={classes.root}
+      display="flex"
+      justifyContent="center"
+      flexDirection="column"
+      alignItems="center">
       <Box>
         <Typography variant="h3">Round Scores</Typography>
         <ol>{elems}</ol>
