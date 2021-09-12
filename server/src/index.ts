@@ -342,5 +342,5 @@ server.listen(port, () => {
 });
 
 const generateRoomID = () => {
-  return crypto.randomBytes(8).toString("hex");
+  return crypto.randomBytes(4).toString("hex");
 };

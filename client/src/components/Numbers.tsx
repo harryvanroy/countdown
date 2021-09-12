@@ -125,6 +125,7 @@ export const Numbers = () => {
         className={classes.selectionsBox}>
         {game?.state.selection?.map((value, index) => (
           <Box
+            key={index}
             width="100px"
             height="100px"
             className={classes.boxes}
