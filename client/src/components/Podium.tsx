@@ -1,6 +1,16 @@
 import React from "react";
 import { useGame } from "../context/game";
-import { Box, Button, Typography, Paper, List, ListItem, ListItemText, Badge, Divider } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  Badge,
+  Divider,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import EmojiEventsIcon from "@material-ui/icons/EmojiEvents";
 
@@ -89,45 +99,49 @@ const Podium = () => {
         <Box>
           <Typography variant="h4">Round Scores</Typography>
           {items.map((item, index) => (
-            <Box display="inline-box" key="index">
-              <EmojiEventsIcon />
-              <Typography className={classes.players}>
-                {item["user"] +
-                  ": came up with " +
-                  item["guess"] +
-                  " scoring " +
-                  item["score"]}
-              </Typography>
+            <Box key="index">
+              <Box display="inline-box">
+                <EmojiEventsIcon />
+                <Typography className={classes.players}>
+                  {item["user"] +
+                    ": came up with " +
+                    item["guess"] +
+                    " scoring " +
+                    item["score"]}
+                </Typography>
+              </Box>
             </Box>
           ))}
         </Box>
         <Box>
           <Typography variant="h4">Cumulative Scores</Typography>
           {itemsTotal.map((item, index) => (
-            <Box display="inline-box" key="index">
-              <EmojiEventsIcon />
-              <Typography className={classes.players}>
-                {item["user"] + ": " + item["score"] + " points"}
-              </Typography>
+            <Box key="index">
+              <Box display="inline-box">
+                <EmojiEventsIcon />
+                <Typography className={classes.players}>
+                  {item["user"] + ": " + item["score"] + " points"}
+                </Typography>
+              </Box>
             </Box>
           ))}
         </Box>
         <Typography variant="h4"> Top Solutions:</Typography>
-        {
-          game?.state?.solutions ?
-            <List dense disablePadding>
-              {game?.state.solutions?.slice(0, Math.min(6, game?.state?.solutions.length)).map((solution) => (
+        {game?.state?.solutions ? (
+          <List dense disablePadding>
+            {game?.state.solutions
+              ?.slice(0, Math.min(6, game?.state?.solutions.length))
+              .map((solution) => (
                 <ListItem>
                   <ListItemText primary={solution} />
                 </ListItem>
               ))}
-            </List> :
-            <p>N/A</p>
-        }
+          </List>
+        ) : (
+          <p>N/A</p>
+        )}
 
-        {/* <Typography>{game?.state.solutions?.slice(0, 6).join(" ")}</Typography> */}
-        <Divider/>
-        <Button variant="contained" onClick={onJoinRoom}>
+        <Button variant="contained" onClick={onJoinRoom} fullWidth>
           Return to Lobby
         </Button>
       </Paper>
