@@ -38,7 +38,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <Grid style={{ width: "100%", padding: "20px" }}>
+    <Grid style={{ padding: "20px" }}>
       {game?.state.gameMode ? (
         <Typography variant="h4">
           {capitalizeFirstLetter(game?.state.gameMode)}
@@ -50,7 +50,7 @@ const Leaderboard = () => {
 
         return (
           <>
-            <Grid item xs={1}>
+            <Grid item xs={12}>
               <Typography variant="caption">{user}</Typography>
               <LinearProgress variant="determinate" value={currGuessNorm} />
             </Grid>
