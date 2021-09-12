@@ -98,13 +98,14 @@ const Podium = () => {
       <Paper className={classes.paper}>
         <Box>
           <Typography variant="h4">Round Scores</Typography>
-          {items.map(({user, guess, score}, index) => (
-            <Box display="inline-box" key="index">
-              <EmojiEventsIcon />
-              <Typography className={classes.players}>
-                <b> {user}: </b> {guess} (score: {score})
-              </Typography>
-   
+          {items.map(({ user, guess, score }, index) => (
+            <Box key="index">
+              <Box display="inline-box">
+                <EmojiEventsIcon />
+                <Typography className={classes.players}>
+                  <b> {user}: </b> {guess} (score: {score})
+                </Typography>
+              </Box>
             </Box>
           ))}
         </Box>
