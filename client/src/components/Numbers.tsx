@@ -39,16 +39,17 @@ export const Numbers = () => {
   const classes = useStyles();
   const game = useGame();
   const [answer, setAnswer] = useState("");
-  const gameTime = game?.state.time === undefined ? 30 : parseInt(game.state.time)
+  const gameTime =
+    game?.state.time === undefined ? 30 : parseInt(game.state.time);
   const [seconds, setSeconds] = useState(gameTime);
   //inside your component function.
   const [audio] = useState(new Audio("./static/countdown.mp3"));
   if (gameTime < 30 && audio.currentTime == 0) {
-    audio.currentTime = gameTime
+    audio.currentTime = gameTime;
   }
   const [isPlaying, setIsPlaying] = useState(false);
 
-  console.log(audio.currentTime)
+  console.log(audio.currentTime);
   useEffect(() => {
     isPlaying ? audio.play() : audio.pause();
   }, [isPlaying]);
@@ -63,7 +64,7 @@ export const Numbers = () => {
         alert(error);
       }
     });
-    setAnswer("")
+    setAnswer("");
   };
 
   const handleAnswerChange = (event: any) => {
@@ -74,7 +75,7 @@ export const Numbers = () => {
     if (isEnterKey(event)) {
       handleCheckAnswer();
     }
-  }
+  };
 
   useEffect(() => {
     const socket = game?.state.socket;
@@ -90,10 +91,10 @@ export const Numbers = () => {
 
   useEffect(() => {
     if (seconds > 0) {
-      setIsPlaying((seconds - gameTime) < 30)
+      setIsPlaying(seconds - gameTime < 30);
       setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
-      setIsPlaying(false)
+      setIsPlaying(false);
     }
   });
 
@@ -113,7 +114,12 @@ export const Numbers = () => {
         alignItems="center">
         <Typography variant="h1">{game?.state.targetNum}</Typography>
       </Box>
-      <Box display="inline-box" className={classes.selectionsBox}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexWrap="wrap"
+        className={classes.selectionsBox}>
         {game?.state.selection?.map((value, index) => (
           <Box
             width="100px"
@@ -132,8 +138,6 @@ export const Numbers = () => {
         </Box>
         <Paper className={classes.paper}>
           <TextField
-            multiline
-            rows={3}
             fullWidth
             value={answer}
             variant="outlined"
