@@ -1,15 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, TextField, Paper, Button } from "@material-ui/core";
+import { Box, TextField, Paper, Button, Typography } from "@material-ui/core";
 import { useGame } from "../context/game";
 
 const useStyles = makeStyles({
   root: {
-    backgroundColor: "rgb(43, 86, 163)",
+    backgroundColor: "rgb(3,22,168, 0.75)",
     height: "100vh",
   },
   workingOut: {
     width: 500,
+  },
+  boxes: {
+    border: "1px solid white",
+    color: "white",
+    backgroundColor: "rgb(3,22,168)",
+    margin: "10px 0",
+  },
+  targetBox: {
+    border: "5px solid white",
+    color: "white",
+    backgroundColor: "rgb(3,22,168)",
+  },
+  selectionsBox: {
+    margin: "30px 0",
+  },
+  timer: {
+    color: "white",
+    margin: "10px",
+  },
+  paper: {
+    margin: "10px",
   },
 });
 
@@ -44,7 +65,7 @@ export const Numbers = () => {
       game?.updateState({
         gameMode: "podium",
         leaderboard: data.leaderboard,
-        totalScores: data.totalScores
+        totalScores: data.totalScores,
       });
     });
   }, [game]);
@@ -60,25 +81,49 @@ export const Numbers = () => {
       className={classes.root}
       display="flex"
       justifyContent="center"
+      flexDirection="column"
       alignItems="center">
-      <Paper>
-        <TextField
-          multiline
-          rows={3}
-          fullWidth
-          value={answer}
-          variant="outlined"
-          placeholder="Enter your answer"
-          onChange={handleAnswerChange}
-        />
-        <Button variant="contained" onClick={handleCheckAnswer} fullWidth>
-          Check answer
-        </Button>
-        <p>Selection: {game?.state.selection?.join()}</p>
-        <p>Target: {game?.state.targetNum}</p>
-        <p>Seconds left: {seconds} </p>
-        <Box></Box>
-      </Paper>
+      <Box
+        width="200px"
+        height="100px"
+        className={classes.targetBox}
+        display="flex"
+        justifyContent="center"
+        alignItems="center">
+        <Typography variant="h1">{game?.state.targetNum}</Typography>
+      </Box>
+      <Box display="inline-box" className={classes.selectionsBox}>
+        {game?.state.selection?.map((value, index) => (
+          <Box
+            width="100px"
+            height="100px"
+            className={classes.boxes}
+            display="flex"
+            justifyContent="center"
+            alignItems="center">
+            <Typography variant="h3">{value}</Typography>
+          </Box>
+        ))}
+      </Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box className={classes.timer}>
+          <Typography variant="h1">{seconds}s</Typography>
+        </Box>
+        <Paper className={classes.paper}>
+          <TextField
+            multiline
+            rows={3}
+            fullWidth
+            value={answer}
+            variant="outlined"
+            placeholder="Enter your answer"
+            onChange={handleAnswerChange}
+          />
+          <Button variant="contained" onClick={handleCheckAnswer} fullWidth>
+            Check answer
+          </Button>
+        </Paper>
+      </Box>
     </Box>
   );
 };

@@ -6,6 +6,7 @@ const Podium = () => {
   const game = useGame();
   const leaderboard = game?.state.leaderboard;
   const totalScores = game?.state.totalScores;
+
   let items = [];
   let elems = [];
   let itemsTotal = [];
@@ -17,6 +18,8 @@ const Podium = () => {
         guess: leaderboard[user]["guess"],
         score: leaderboard[user]["score"],
       });
+    }
+    for (const user in totalScores) {
       itemsTotal.push({
         user: user,
         score: totalScores[user]

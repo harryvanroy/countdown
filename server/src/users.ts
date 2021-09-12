@@ -74,7 +74,9 @@ export const getUsersInRoom = (roomId: string): User[] => {
 export const addRoom = (id: string, room: Room): void => {
   rooms[id] = room;
   for (const a of getUsersInRoom(id)) {
-    room.totalScores[a.username] = 0
+    if (room.totalScores[a.username] === undefined) {
+      room.totalScores[a.username] = 0
+    }
   }
 };
 
