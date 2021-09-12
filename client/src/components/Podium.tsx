@@ -1,6 +1,6 @@
 import React from "react";
 import { useGame } from "../context/game";
-import { Box, Button, Typography } from "@material-ui/core";
+import { Box, Button, Typography, Paper } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
@@ -32,6 +32,7 @@ const useStyles = makeStyles({
   },
   paper: {
     margin: "10px",
+    padding: "25px",
   },
 });
 
@@ -96,19 +97,21 @@ const Podium = () => {
       justifyContent="center"
       flexDirection="column"
       alignItems="center">
-      <Box>
-        <Typography variant="h3">Round Scores</Typography>
-        <ol>{elems}</ol>
-      </Box>
-      <Box>
-        <Typography variant="h3">Cumulative Scores</Typography>
-        <ol>{elemsTotal}</ol>
-      </Box>
-      <Typography variant="h3"> Possible Solution:</Typography>
-      <Typography>{game?.state.solutions?.join(" ")}</Typography>
-      <Button variant="contained" onClick={onJoinRoom}>
-        Return to Lobby
-      </Button>
+      <Paper className={classes.paper}>
+        <Box>
+          <Typography variant="h4">Round Scores</Typography>
+          <ol>{elems}</ol>
+        </Box>
+        <Box>
+          <Typography variant="h4">Cumulative Scores</Typography>
+          <ol>{elemsTotal}</ol>
+        </Box>
+        <Typography variant="h4"> Top Solutions:</Typography>
+        <Typography>{game?.state.solutions?.slice(0, 6).join(" ")}</Typography>
+        <Button variant="contained" onClick={onJoinRoom}>
+          Return to Lobby
+        </Button>
+      </Paper>
     </Box>
   );
 };
