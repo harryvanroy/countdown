@@ -182,7 +182,7 @@ const Lobby = () => {
         ) : (
           <Box display="inline-box">
             <CircularProgress />
-            <Typography variant="caption">
+            <Typography variant="h6" style={{ marginLeft: "10px" }}>
               Waiting for host to start the game
             </Typography>
           </Box>
