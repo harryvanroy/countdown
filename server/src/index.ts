@@ -115,7 +115,7 @@ io.on(
 
           const currDelta = 9 - guess.length;
 
-          console.log({prevDelta, currDelta})
+          console.log({ prevDelta, currDelta });
 
           if (currDelta > prevDelta) return;
 
@@ -147,7 +147,7 @@ io.on(
 
           const currDelta = Math.abs(eval(answerSafe) - room.targetNum);
 
-          console.log({prevDelta, currDelta})
+          console.log({ prevDelta, currDelta });
 
           if (currDelta > prevDelta) {
             return;
@@ -242,6 +242,7 @@ io.on(
           solutions,
           selection,
           targetNum: target,
+          leaderboard: {},
         });
 
         io.to(user.roomID).emit("startGame", {
@@ -264,6 +265,7 @@ io.on(
           gameStarted: true,
           solutions,
           selection,
+          leaderboard: {},
         });
 
         io.to(user.roomID).emit("startGame", {

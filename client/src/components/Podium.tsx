@@ -7,6 +7,7 @@ const useStyles = makeStyles({
   root: {
     backgroundColor: "rgb(35,65,119)",
     height: "100vh",
+    color: "white",
   },
   workingOut: {
     width: 500,
@@ -42,9 +43,7 @@ const Podium = () => {
   const classes = useStyles();
 
   let items = [];
-  let elems = [];
   let itemsTotal = [];
-  let elemsTotal = [];
   if (leaderboard !== undefined && totalScores !== undefined) {
     for (const user in leaderboard) {
       items.push({
@@ -65,21 +64,6 @@ const Podium = () => {
     itemsTotal.sort((o1, o2) => {
       return o2["score"] < o1["score"] ? -1 : 1;
     });
-
-    for (const a of items) {
-      elems.push(
-        <li>
-          {a["user"] +
-            ": came up with " +
-            a["guess"] +
-            " scoring " +
-            a["score"]}
-        </li>
-      );
-    }
-    for (const a of itemsTotal) {
-      elemsTotal.push(<li>{a["user"] + ": " + a["score"] + " points"}</li>);
-    }
   }
 
   const onJoinRoom = (e: any) => {
@@ -89,14 +73,25 @@ const Podium = () => {
   };
 
   return (
-    <Box>
+    <Box
+      className={classes.root}
+      display="flex"
+      justifyContent="center"
+      flexDirection="column"
+      alignItems="center">
       <Box>
         <Typography variant="h3">Round Scores</Typography>
-        <ol>{elems}</ol>
-      </Box>
-      <Box>
-        <Typography variant="h3">Cumulative Scores</Typography>
-        <ol>{elemsTotal}</ol>
+        <ol>
+          {items.map((item, index) => (
+            <li>
+              {item["user"] +
+                ": came up with " +
+                item["guess"] +
+                " scoring " +
+                item["score"]}
+            </li>
+          ))}
+        </ol>
       </Box>
       <Typography variant="h3"> Possible Solution:</Typography>
       <Typography>{game?.state.solutions?.join(" ")}</Typography>

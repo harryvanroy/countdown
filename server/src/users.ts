@@ -10,15 +10,14 @@ interface Room {
   solutions: string[] | null;
   selection: number[] | string | null;
   targetNum: number | null;
-  // leaderboard: Record<string, Record<string, number | string>>
   leaderboard: {
     [username: string]: {
-      score?: number,
-      guess?: string | number,
-      delta?: number
-    }
-  }
-  totalScores: Record<string, number>
+      score?: number;
+      guess?: string | number;
+      delta?: number;
+    };
+  };
+  totalScores: Record<string, number>;
 }
 
 export const rooms: Record<string, Room> = {};
@@ -75,7 +74,7 @@ export const addRoom = (id: string, room: Room): void => {
   rooms[id] = room;
   for (const a of getUsersInRoom(id)) {
     if (room.totalScores[a.username] === undefined) {
-      room.totalScores[a.username] = 0
+      room.totalScores[a.username] = 0;
     }
   }
 };

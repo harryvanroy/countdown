@@ -91,7 +91,10 @@ export const Numbers = () => {
 
   useEffect(() => {
     if (seconds > 0) {
-      setIsPlaying(seconds - gameTime < 30);
+      setIsPlaying(true);
+      if (audio.currentTime >= 15 && seconds > 15) {
+        audio.currentTime = Math.min(30 - seconds, 2);
+      }
       setTimeout(() => setSeconds(seconds - 1), 1000);
     } else {
       setIsPlaying(false);
