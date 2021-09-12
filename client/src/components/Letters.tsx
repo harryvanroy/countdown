@@ -134,8 +134,6 @@ export const Letters = () => {
         </Box>
         <Paper className={classes.paper}>
           <TextField
-            multiline
-            rows={3}
             fullWidth
             value={answer}
             variant="outlined"

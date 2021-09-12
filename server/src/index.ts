@@ -109,11 +109,13 @@ io.on(
         ) {
           let prevDelta = room.leaderboard[user.username]?.delta;
 
-          if (!prevDelta && prevDelta !== 0) {
+          if (prevDelta == null) {
             prevDelta = Infinity;
           }
 
-          const currDelta = 9 - Math.min(guess.length, 9);
+          const currDelta = 9 - guess.length;
+
+          console.log({prevDelta, currDelta})
 
           if (currDelta > prevDelta) return;
 
@@ -141,6 +143,8 @@ io.on(
           }
 
           const currDelta = Math.abs(eval(answerSafe) - room.targetNum);
+
+          console.log({prevDelta, currDelta})
 
           if (currDelta > prevDelta) {
             return;
