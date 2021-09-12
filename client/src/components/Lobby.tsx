@@ -99,8 +99,6 @@ const Lobby = () => {
 
   const onStartGame = (e: any) => {
     const socket = game?.state.socket;
-    console.log(gameType);
-    console.log(gameTime)
     const body = {
       mode: gameType,
       time: gameTime
