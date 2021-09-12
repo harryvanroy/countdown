@@ -135,6 +135,15 @@ io.on(
           });
         }
       }
+      // io.to(user.roomID).emit("chatMessage", {
+      //   username: "server",
+      //   message: `${user.username}'s guess scores ${room.leaderboard[user.username]["score"]}`,
+      // });
+
+      io.to(user.roomID).emit("userBestGuess", {
+        username: user.username,
+        guessLength: room.leaderboard[user.username]["score"]
+      })
     });
 
     socket.on("joinRoom", ({ username, room }, callback) => {
