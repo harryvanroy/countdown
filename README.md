@@ -1,9 +1,5 @@
 # countdown
 
----
-
-Countdown Cowboy's UQCS Hackathon project - Countdown: https://www.canva.com/design/DAEpxZch0Dc/o0aokl3ErnzET0vkaQzuyw/view?utm_content=DAEpxZch0Dc&utm_campaign=designshare&utm_medium=link&utm_source=sharebutton
-
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
